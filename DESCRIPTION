@@ -15,7 +15,8 @@ Description: This package is intended to help researchers
 License: GPL-3
 Suggests: 
     testthat (>= 2.1.0),
-    vctrs
+    vctrs,
+    covr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

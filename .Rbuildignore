@@ -5,3 +5,5 @@
 ^cran-comments\.md$
 ^\.github$
 ^action-items\.md$
+^\.travis\.yml$
+^codecov\.yml$
