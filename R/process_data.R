@@ -11,15 +11,20 @@
 #'
 #' @param path The path to a data download zip file or the path to an extracted
 #'   data download directory.
+#' @param split_responses If \code{TRUE}, split the responses out into three
+#'   tables (\code{surveys}, \code{quizzes}, \code{in_text}) via
+#'   \code{\link{split_responses}}.
 #'
 #' @return This function returns \code{TRUE} if it completes successfully, and
 #'   \code{FALSE} if it is aborted.
 #' @export
-process_data <- function(path) {
-  existing <- purrr::keep(
-    c("classes", "responses", "page_views", "media_views", "items", "tags"),
-    exists
+process_data <- function(path, split_responses = FALSE) {
+  tbls <- c(
+    if (split_responses) c("quizzes", "in_text", "surveys") else "responses",
+    "classes", "page_views", "media_views", "items", "tags"
   )
+
+  existing <- purrr::keep(tbls, exists)
 
   if (length(existing) > 0) {
     var_string <- paste(existing, collapse = ", ")
@@ -40,11 +45,18 @@ process_data <- function(path) {
   }
 
   assign("classes", process_classes(path), pos = 1)
-  assign("responses", process_responses(path), pos = 1)
   assign("page_views", process_page_views(path), pos = 1)
   assign("media_views", process_media_views(path), pos = 1)
   assign("items", process_items(path), pos = 1)
   assign("tags", process_tags(path), pos = 1)
+  assign("responses", process_responses(path), pos = 1)
+  if (split_responses) {
+    responses <- split_responses(responses)
+    assign("surveys", responses$surveys, pos = 1)
+    assign("quizzes", responses$quizzes, pos = 1)
+    assign("in_text", responses$in_text, pos = 1)
+    remove(responses, pos = 1)
+  }
 
   invisible(TRUE)
 }

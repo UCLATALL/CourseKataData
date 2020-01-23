@@ -1,14 +1,14 @@
 context("Processing full data download")
 
+library(dplyr)
 library(fs)
 library(zip)
 
 ex_dir <- path_temp("some_path")
 zip_file <- data_file("zipped.zip")
+zip::unzip(data_file("zipped.zip"), exdir = ex_dir)
 
 test_that("it will load all of the data and create six data frames", {
-  zip::unzip(data_file("zipped.zip"), exdir = ex_dir)
-
   suppressWarnings(process_data(ex_dir))
 
   expect_identical(classes, process_classes(ex_dir))
@@ -32,4 +32,16 @@ test_that("it can load from a zip file and create six data frames", {
   expect_identical(tags, process_tags(zip_file))
 
   rm(classes, responses, page_views, media_views, items, tags, envir = .GlobalEnv)
+})
+
+test_that("it will optionally split responses to globals", {
+  expected <- suppressWarnings(process_responses(zip_file)) %>%
+    split_responses()
+
+  suppressWarnings(process_data(zip_file, split_responses = TRUE))
+
+  expect_false(exists("responses"))
+  expect_identical(surveys, expected$surveys)
+  expect_identical(quizzes, expected$quizzes)
+  expect_identical(in_text, expected$in_text)
 })

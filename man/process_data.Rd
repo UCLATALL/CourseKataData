@@ -4,11 +4,15 @@
 \alias{process_data}
 \title{Process the data from a CourseKata data download.}
 \usage{
-process_data(path)
+process_data(path, split_responses = FALSE)
 }
 \arguments{
 \item{path}{The path to a data download zip file or the path to an extracted
 data download directory.}
+
+\item{split_responses}{If \code{TRUE}, split the responses out into three
+tables (\code{surveys}, \code{quizzes}, \code{in_text}) via
+\code{\link{split_responses}}.}
 }
 \value{
 This function returns \code{TRUE} if it completes successfully, and
