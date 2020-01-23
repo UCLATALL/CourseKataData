@@ -69,7 +69,7 @@ process_responses <- function(object, time_zone = "UTC", class_id = "") {
 #' @export
 convert_types_in_responses <- function(responses, time_zone = "UTC") {
   responses %>%
-    dplyr::mutate_all(as.character) %>%  # prevent probs from stringsAsFactors
+    dplyr::mutate_all(as.character) %>% # prevent probs from stringsAsFactors
     mutate_at_if_exists(
       c("attempt", "lrn_question_position"),
       readr::parse_integer
@@ -133,13 +133,16 @@ ensure_data_in_responses <- function(responses) {
     specific_warnings <- as.data.frame(missing_data_matrix) %>%
       furrr::future_imap_chr(function(is_na, name) {
         rows <- which(is_na) %>% paste(collapse = ", ")
-        if (nchar(rows) == 0) ""
-        else sprintf(
-          "\n - missing %s at %s %s",
-          name,
-          pluralize("row", nchar(rows) > 1),
-          rows
-        )
+        if (nchar(rows) == 0) {
+          ""
+        } else {
+          sprintf(
+            "\n - missing %s at %s %s",
+            name,
+            pluralize("row", nchar(rows) > 1),
+            rows
+          )
+        }
       })
 
     warning(c(general_warning, specific_warnings) %>% paste0(collapse = ""))
@@ -173,7 +176,9 @@ map_response_options <- function(responses) {
   if (!ensure_columns(
     responses, c("lrn_type", "lrn_question_reference"),
     warning, "Cannot create lookup table. "
-  )) { return(responses) }
+  )) {
+    return(responses)
+  }
 
   lookup_table <- responses %>%
     dplyr::filter_at("lrn_type", function(x) x == "mcq") %>%
@@ -185,7 +190,7 @@ map_response_options <- function(responses) {
 
   value_positions <-
     responses$lrn_question_reference %in% lookup_table$lrn_question_reference &
-    !is.na(responses$response)
+      !is.na(responses$response)
 
   values <- furrr::future_map2_chr(
     responses$response[value_positions],
@@ -205,8 +210,12 @@ map_response_options <- function(responses) {
 map_response <- function(response, reference, lookup_table) {
   item_row <- match(reference, lookup_table$lrn_question_reference)
 
-  if (is.na(item_row)) return(response)
-  if (response == "[]") return(NA_character_)
+  if (is.na(item_row)) {
+    return(response)
+  }
+  if (response == "[]") {
+    return(NA_character_)
+  }
 
   option_numbers <- response %>%
     stringr::str_split(",", simplify = TRUE) %>%

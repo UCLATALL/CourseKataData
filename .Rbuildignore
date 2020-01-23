@@ -7,3 +7,4 @@
 ^action-items\.md$
 ^\.travis\.yml$
 ^codecov\.yml$
+^\.covrignore$

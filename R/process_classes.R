@@ -11,5 +11,5 @@
 process_classes <- function(path) {
   path %>%
     load_data(paste0("classes[.]csv$", collapse = "|"), limit_search = 1) %>%
-    dplyr::mutate_at("setup_yaml", ~purrr::map(.x, jsonlite::parse_json))
+    dplyr::mutate_at("setup_yaml", ~ purrr::map(.x, jsonlite::parse_json))
 }

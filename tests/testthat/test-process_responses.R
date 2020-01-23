@@ -11,9 +11,9 @@ mock_response_looktbl <- data.frame(
   lrn_question_reference = c(1, 2, 1, 3),
   lrn_type = c("mcq", "plaintext", "mcq", "mcq"),
   response = c('["1"]', '["2"]', '["0", "1"]', "[]"),
-  lrn_option_0 = c("Yes",      1, "Yes", "50"),
-  lrn_option_1 = c("No",       2,  "No", "60"),
-  lrn_option_2 = c(  NA, "Three",    NA, "70")
+  lrn_option_0 = c("Yes", 1, "Yes", "50"),
+  lrn_option_1 = c("No", 2, "No", "60"),
+  lrn_option_2 = c(NA, "Three", NA, "70")
 )
 
 mock_responses_integration <- data.frame(
@@ -331,7 +331,7 @@ test_that("mapping a 2 option response yields a length 1 delimited string", {
 
 test_that("mapping responses works with multiple responses in a data.frame", {
   map_response_options(mock_response_looktbl)$response %>%
-    expect_identical(c("No", '["2"]', "Yes; No", NA_character_),)
+    expect_identical(c("No", '["2"]', "Yes; No", NA_character_))
 })
 
 
@@ -453,4 +453,3 @@ test_that("processing responses shows no errors with a subset of real data", {
   test_resp <- read.csv("../data/responses.csv")
   expect_error(suppressWarnings(process_responses(test_resp)), NA)
 })
-

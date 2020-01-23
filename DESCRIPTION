@@ -33,3 +33,5 @@ Imports:
     fs,
     furrr,
     future
+Depends: 
+    R (>= 3.2)

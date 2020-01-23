@@ -32,7 +32,7 @@ process_data <- function(path, split_responses = FALSE) {
     if (interactive()) {
       choice <- utils::menu(
         title = paste("These variables will be overwritten:", var_string),
-        choices  = c("Abort.", "Overwrite them.", "Do not overwrite.")
+        choices = c("Abort.", "Overwrite them.", "Do not overwrite.")
       )
 
       if (choice != 2) {
