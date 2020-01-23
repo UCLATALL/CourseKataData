@@ -10,3 +10,4 @@
 0 errors | 0 warnings | 1 note
 
 * This is a new release.
+* The note is regarding required functionality. Part of the point of this package is to present an easy way for researchers (some new to R) to get working with a number of related tables. There are functions for processing different files. These functions are also called by a one-off process_data() function which creates the same six data frames each time it is run. The user is warned and given the opportunity to abort if variables would be overwritten.
