@@ -285,11 +285,8 @@ course. The table has five variables:
 ## `media_views.csv`
 
 The media view data refers to student interactions with the videos in
-the course. It comes in a table of student-page-datetime cases. That is,
-there is a row for every time a student accessed a page in the course.
-The table has five variables:
-
-class\_id,student\_id,chapter,page,type,media\_id,dt\_started,dt\_last\_event,proportion\_video,proportion\_time,log\_json
+the course. It comes in a table of student-video cases. That is, there
+is a row for each video for each student. The table has five variables:
 
 |                Column | Description                                                                                                                                                                                                                                                        |
 | --------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -303,15 +300,15 @@ class\_id,student\_id,chapter,page,type,media\_id,dt\_started,dt\_last\_event,pr
 |   **dt\_last\_event** | a datetime object indicating when the video was last interacted with (timezone: GMT/UTC)                                                                                                                                                                           |
 | **proportion\_video** | the proportion of the video that student has watched, summed across all interactions with the video                                                                                                                                                                |
 |  **proportion\_time** | the proportion of the full video runtime that the student has spent watching a video, regardless of which part of the video they watched (e.g. if the video is 10 seconds long, and the student watches the first 5 seconds three times, this value should be 1.5) |
-|   **log\_json** t w i | he fully-detailed JSON object about student interactions ith the video (converted to a `list` object when the data s processed)                                                                                                                                    |
+|         **log\_json** | the fully-detailed JSON object about student interactions with the video (converted to a `list` object when the data is processed)                                                                                                                                 |
 
 ## `items.csv`
 
 Items are organized in a table where each row represents all of the data
 for a particular question in the class. There are 18 columns in the
 table, though they will never *all* be relevant for a particular item.
-Columns prefixed with “dcl\_” are only filled for DataCamp-Light items
-(the R-sandboxes) and columns prefixed with “lrn\_” are only filled for
+Columns prefixed with `dcl_` are only filled for DataCamp-Light items
+(the R-sandboxes) and columns prefixed with `lrn_` are only filled for
 Learnosity items. Here are descriptions of the columns in the table:
 
 |                       Column | Description                                                                                                    |
