@@ -37,7 +37,7 @@ Alternatively you can download the package directly from this repository using d
 
 ``` r
 library(devtools)
-install_github("UCLATALL/supernova")
+install_github("UCLATALL/CourseKataData")
 ```
 
 ## Usage
