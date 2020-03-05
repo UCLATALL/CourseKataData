@@ -23,14 +23,7 @@ completed courses.
 
 ## Installation
 
-You can install the released version of CourseKataData from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("CourseKataData")
-```
-
-Alternatively you can download the package directly from this repository
+You can install the package directly from this repository
 using devtools:
 
 ``` r
