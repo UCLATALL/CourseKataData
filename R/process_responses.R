@@ -213,7 +213,8 @@ map_response <- function(response, reference, lookup_table) {
   if (is.na(item_row)) {
     return(response)
   }
-  if (response == "[]") {
+
+  if (response %in% c('[]', '')) {
     return(NA_character_)
   }
 
