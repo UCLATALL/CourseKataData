@@ -28,7 +28,7 @@ using devtools:
 
 ``` r
 library(devtools)
-install_github("UCLATALL/supernova")
+install_github("UCLATALL/CourseKataData")
 ```
 
 ## Usage
