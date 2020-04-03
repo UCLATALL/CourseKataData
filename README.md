@@ -23,12 +23,19 @@ completed courses.
 
 ## Installation
 
-You can install the package directly from this repository
+You can install the released version of CourseKataData from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("CourseKataData")
+```
+
+Alternatively you can download the package directly from this repository
 using devtools:
 
 ``` r
 library(devtools)
-install_github("UCLATALL/supernova")
+install_github("UCLATALL/CourseKataData")
 ```
 
 ## Usage
@@ -61,8 +68,9 @@ process_data("path/to/downloaded/data")
 ```
 
 When you run this function it will load all of the data and create six
-data frames (actually `tibble`s, but they work pretty much the same).
-These are the names of the data frames that are created:
+data frames (actually [tibbles](https://tibble.tidyverse.org/), but they
+work pretty much the same). These are the names of the data frames that
+are created:
 
   - `classes`
   - `responses`

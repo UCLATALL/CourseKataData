@@ -16,17 +16,31 @@
 #'   \code{\link{map_dfr}} and \code{\link{read.csv}} with
 #'   \code{stringsAsFactors} set to \code{FALSE}.
 #'
-#' @name load_data
-NULL
-
-#' @rdname load_data
 #' @export
-load_data <- function(path, regexp, limit_search = NULL) {
+load_data <- function(path, regexp, class_id = NULL, limit_search = NULL) {
+  if (!is.null(class_id)) {
+    cls_pattern <- ifelse(class_id == "", class_id, paste0(class_id, "/"))
+    pattern <- paste0(cls_pattern, regexp, collapse = "|")
+    return(load_data(path, pattern, limit_search = limit_search))
+  }
+
   if (fs::is_file(path) & fs::path_ext(path) == "zip") {
-    ex_dir <- fs::path_temp(fs::path_ext_remove(fs::path_file(path)))
-    files <- stringr::str_subset(zip::zip_list(path)$filename, regexp)
-    zip::unzip(path, files = files, exdir = ex_dir)
-    path <- ex_dir
+    zip_list <- utils::unzip(path, list = TRUE)[["Name"]]
+    targets <- stringr::str_subset(zip_list, regexp)
+
+    # remove possible bad directory with : in filenames
+    safe_targets <- stringr::str_split_fixed(targets, "/", 2)[, 2]
+    safe_directories <- fs::path_dir(safe_targets)
+
+    # extract to a temporary directory
+    temp_dir <- fs::path_ext_remove(fs::path_file(path)) %>% fs::path_temp()
+    purrr::walk2(targets, safe_directories, function(file_name, directory) {
+      ex_dir <- fs::path(temp_dir, directory)
+      utils::unzip(path, file_name, junkpaths = TRUE, exdir = ex_dir)
+    })
+
+    # set the path to the ex_dir so it gets picked up in next if block
+    path <- temp_dir
   }
 
   if (fs::is_dir(path)) {
@@ -34,14 +48,21 @@ load_data <- function(path, regexp, limit_search = NULL) {
     if (!purrr::is_empty(limit_search)) path <- path[1:limit_search]
   }
 
-  furrr::future_map_dfr(path, utils::read.csv, stringsAsFactors = FALSE) %>%
-    dplyr::as_tibble()
+  purrr::map_dfr(path, utils::read.csv, stringsAsFactors = FALSE) %>%
+    tibble::as_tibble()
 }
 
-#' @rdname load_data
-#' @export
-load_class_data <- function(path, regexp, class_id, limit_search = NULL) {
-  cls_pattern <- ifelse(class_id == "", class_id, paste0(class_id, "/"))
-  pattern <- paste0(cls_pattern, regexp, collapse = "|")
-  load_data(path, pattern, limit_search)
+
+load_object <- function(object, type = NULL, class_id = NULL, limit_search = NULL) {
+  stopifnot(is.data.frame(object) || is.character(object))
+
+  # by default assume we are getting a data frame,
+  # but if we get a string instead...
+  if (is.character(object)) {
+    file_name <- sprintf("%s[.]csv$", type)
+    object <- load_data(object, file_name, class_id, limit_search)
+  }
+
+  tibble::as_tibble(object) %>%
+    purrr::modify(as.character)
 }

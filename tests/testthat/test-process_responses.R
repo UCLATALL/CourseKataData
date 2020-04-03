@@ -153,10 +153,7 @@ test_that("responses with a missing class_id are dropped with warning", {
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
   expect_warning(
     ensure_data_in_responses(mock_response),
-    paste0(
-      "Dropped 1 row:",
-      "\n - missing class_id at row 1"
-    )
+    "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
@@ -170,10 +167,7 @@ test_that("responses with a missing student_id are dropped with warning", {
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
   expect_warning(
     ensure_data_in_responses(mock_response),
-    paste0(
-      "Dropped 1 row:",
-      "\n - missing student_id at row 1"
-    )
+    "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
@@ -187,10 +181,7 @@ test_that("responses with a missing prompt are dropped with warning", {
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
   expect_warning(
     ensure_data_in_responses(mock_response),
-    paste0(
-      "Dropped 1 row:",
-      "\n - missing prompt at row 1"
-    )
+    "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
@@ -204,12 +195,7 @@ test_that("responses with multiple missing values have comprehensive warning", {
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
   expect_warning(
     ensure_data_in_responses(mock_response),
-    paste0(
-      "Dropped 1 row:",
-      "\n - missing class_id at row 1",
-      "\n - missing student_id at row 1",
-      "\n - missing prompt at row 1"
-    )
+    "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
@@ -223,12 +209,7 @@ test_that("empty strings are treated like NA when ensuring required columns", {
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
   expect_warning(
     ensure_data_in_responses(mock_response),
-    paste0(
-      "Dropped 1 row:",
-      "\n - missing class_id at row 1",
-      "\n - missing student_id at row 1",
-      "\n - missing prompt at row 1"
-    )
+    "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
@@ -242,12 +223,7 @@ test_that("multiple dropped responses have a comprehensive warning", {
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 1)
   expect_warning(
     ensure_data_in_responses(mock_response),
-    paste0(
-      "Dropped 3 rows:",
-      "\n - missing class_id at rows 1, 2",
-      "\n - missing student_id at rows 1, 3",
-      "\n - missing prompt at row 3"
-    )
+    "Dropped 3 rows missing data at either class_id, student_id, or prompt"
   )
 })
 

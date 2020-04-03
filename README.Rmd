@@ -61,7 +61,7 @@ If you would like to unzip the file first (which can sometimes be faster), you c
 process_data("path/to/downloaded/data")
 ```
 
-When you run this function it will load all of the data and create six data frames (actually `tibble`s, but they work pretty much the same). These are the names of the data frames that are created:
+When you run this function it will load all of the data and create six data frames (actually [tibbles](https://tibble.tidyverse.org/), but they work pretty much the same). These are the names of the data frames that are created:
 
  - `classes`
  - `responses`

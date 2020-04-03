@@ -17,6 +17,7 @@
 #'
 #' @return This function returns \code{TRUE} if it completes successfully, and
 #'   \code{FALSE} if it is aborted.
+#'
 #' @export
 process_data <- function(path, split_responses = FALSE) {
   tbls <- c(
@@ -36,12 +37,11 @@ process_data <- function(path, split_responses = FALSE) {
       )
 
       if (choice != 2) {
-        message("Data processing aborted.")
-        invisible(FALSE)
+        rlang::abort("Data processing aborted by user.")
       }
     }
 
-    message(paste("Overwriting variables:", var_string))
+    rlang::inform(paste("Overwriting variables:\n", var_string))
   }
 
   assign("classes", process_classes(path), pos = 1)
@@ -57,6 +57,9 @@ process_data <- function(path, split_responses = FALSE) {
     assign("in_text", responses$in_text, pos = 1)
     remove(responses, pos = 1)
   }
+
+  var_string <- paste(tbls, collapse = ", ")
+  rlang::inform(paste("You can now use these variables:\n", var_string))
 
   invisible(TRUE)
 }

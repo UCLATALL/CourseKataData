@@ -1,37 +1,38 @@
 Package: CourseKataData
 Title: Work With Data From CourseKata Data Science Classes
-Version: 0.0.0.9000
-Authors@R: 
+Version: 0.0.1
+Authors@R: c(
     person(given = "Adam",
            family = "Blake",
            role = c("aut", "cre"),
            email = "adamblake@g.ucla.edu",
-           comment = c(ORCID = "0000-0001-7881-8652"))
+           comment = c(ORCID = "0000-0001-7881-8652")),
+    person(given = "CourseKata",
+           role = c("cph", "fnd")))
 Description: This package is intended to help researchers
     working with CourseKata courses on data science, statistics, and
     modeling. There are useful functions for cleaning and tidying the raw
     course data from completed courses. Functions are also available to
     aid analysis of these types of data.
 License: GPL-3
-Suggests: 
-    testthat (>= 2.1.0),
-    vctrs,
-    covr
 Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.0
+Depends: 
+    R (>= 3.2)
 Imports: 
     magrittr,
+    zip,
+    fs,
     readr,
     jsonlite,
     stringr,
-    dplyr,
     purrr,
-    tidyr,
-    zip,
-    fs,
-    furrr,
-    future
-Depends: 
-    R (>= 3.2)
+    tibble,
+    rlang
+Suggests: 
+    testthat (>= 2.1.0),
+    covr,
+    vctrs,
+    dplyr
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0

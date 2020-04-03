@@ -2,12 +2,9 @@
 % Please edit documentation in R/load_data.R
 \name{load_data}
 \alias{load_data}
-\alias{load_class_data}
 \title{Load file(s) from a directory, zipped directory, or file path.}
 \usage{
-load_data(path, regexp, limit_search = NULL)
-
-load_class_data(path, regexp, class_id, limit_search = NULL)
+load_data(path, regexp, class_id = NULL, limit_search = NULL)
 }
 \arguments{
 \item{path}{The path to find the files at.}
@@ -15,12 +12,12 @@ load_class_data(path, regexp, class_id, limit_search = NULL)
 \item{regexp}{If \code{path} is a directory or zipped directory, a
 \code{\link{regex}} pattern indicating which file names to search for.}
 
+\item{class_id}{A character vector of the class ID(s) to load.}
+
 \item{limit_search}{If \code{path} is a directory or zipped directory, an
 integer indicating how many files to match, e.g. \code{1} indicates that
 only the first file found should be loaded. \code{NULL}, the default, uses
 all files that \code{regexp} matches.}
-
-\item{class_id}{A character vector of the class ID(s) to load.}
 }
 \value{
 A \code{\link{tibble}} of the data found at the path given, or if the

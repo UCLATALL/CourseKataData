@@ -17,5 +17,8 @@ A list of \code{\link{tibble}} objects with three elements:
 \code{in_text}, for all other items that appear in the textbook.
 }
 \description{
-Split a responses table into semantically distinct parts.
+The resulting responses table can be quite large and is filled with many
+different types of responses. Pass the responses table to \code{split_responses()}
+to break the data into three distinct components: pre- and post-course
+surveys, end of chapter quizzes, and in-text questions.
 }
