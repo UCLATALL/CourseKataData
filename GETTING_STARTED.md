@@ -1,4 +1,55 @@
 
+# Getting Started
+
+*Note: This file is included in all data downloads for completed courses
+on [CourseKata](https://coursekata.org).*
+
+The easiest way to get up and running with class data from our course is
+to use our custom R package ‘CourseKataData’ which can be found at
+<https://github.com/UCLATALL/CourseKataData>. The package will unpack
+and pre-process the data for you to make it a little more manageable. If
+you aren’t comfortable with using R, we still recommend that you use
+this package to process the data before continuing with your preferred
+statistical methods.
+
+The absolute simplest way to get running is only a few lines of code in
+R:
+
+``` r
+# install a package to install the processing package
+install.packages('devtools')
+
+# install the processing package
+devtools::install_github('UCLATALL/CourseKataData')
+
+# load the package
+library(CourseKataData)
+
+# process the data (change the path to point to your downloaded zip file)
+process_data('path/to/your/data')
+```
+
+By default, the data will be loaded into R objects. R has a number of
+tools for exporting objects to standard formats. A common format that
+can be read by most programs (including Excel, Stata, SAS, SPSS) is the
+comma-separated value (CSV) format. You can export to CSV format with
+the following code:
+
+``` r
+write.csv(responses, 'path/to/save/the/csv/to', na = '', row.names = FALSE)
+# responses is only one of the objects that is created by process_data()
+# make sure you export all the data you need
+```
+
+## More Detail
+
+The rest of this document is the full README that is included on the
+‘CourseKataData’ repository. In addition to explaining some of the
+other functions in the package, there is a section that explains each of
+the variables in each of the downloaded data files (**Data Structure**).
+
+<br> <br> <br> ——————————————————————————– <br> <br> <br>
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # CourseKataData <img src='man/figures/logo.png' align="right" height="138" />
