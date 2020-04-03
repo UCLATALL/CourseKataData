@@ -5,12 +5,12 @@
 
 <!-- badges: start -->
 
+[![R build
+status](https://github.com/UCLATALL/CourseKataData/workflows/R-CMD-check/badge.svg)](https://github.com/UCLATALL/CourseKataData/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/CourseKataData)](https://CRAN.R-project.org/package=CourseKataData)
 [![Codecov test
 coverage](https://codecov.io/gh/UCLATALL/CourseKataData/branch/master/graph/badge.svg)](https://codecov.io/gh/UCLATALL/CourseKataData?branch=master)
-[![Travis build
-status](https://travis-ci.org/UCLATALL/CourseKataData.svg?branch=master)](https://travis-ci.org/UCLATALL/CourseKataData)
 <!-- badges: end -->
 
 The goal of CourseKataData is to help researchers working with

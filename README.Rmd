@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 # CourseKataData <img src='man/figures/logo.png' align="right" height="138" />
 
 <!-- badges: start -->
-[![CRAN status](https://www.r-pkg.org/badges/version/CourseKataData)](https://CRAN.R-project.org/package=CourseKataData)
+[![R build status](https://github.com/UCLATALL/CourseKataData/workflows/R-CMD-check/badge.svg)](https://github.com/UCLATALL/CourseKataData/actions)
 [![Codecov test coverage](https://codecov.io/gh/UCLATALL/CourseKataData/branch/master/graph/badge.svg)](https://codecov.io/gh/UCLATALL/CourseKataData?branch=master)
-[![Travis build status](https://travis-ci.org/UCLATALL/CourseKataData.svg?branch=master)](https://travis-ci.org/UCLATALL/CourseKataData)
+[![CRAN status](https://www.r-pkg.org/badges/version/CourseKataData)](https://CRAN.R-project.org/package=CourseKataData)
 <!-- badges: end -->
 
 The goal of CourseKataData is to help researchers working with CourseKata courses on data science, statistics, and modeling. The data downloaded from [CourseKata](https://www.coursekata.org) can be useful in the more-or-less "raw" form that it comes in, but you will usually want to process the data before working with it. This package includes useful functions for cleaning and tidying the raw course data from completed courses. 
