@@ -68,7 +68,7 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
-          remotes::install_cran("tibble")
+          remotes::install_cran(c("tibble", "readr"))
         shell: Rscript {0}
 
       - name: Check
