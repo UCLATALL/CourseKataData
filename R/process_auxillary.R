@@ -35,46 +35,37 @@ NULL
 #' @export
 process_classes <- function(object) {
   object <- load_object(object, "classes", limit_search = 1)
-  purrr::modify_at(object, "setup_yaml", ~ purrr::map(.x, jsonlite::parse_json))
+  purrr::modify_at(object, "setup_yaml", safe_convert_json)
 }
 
 #' @rdname process_auxillary
 #' @export
 process_page_views <- function(object, time_zone = "UTC", class_id = NULL) {
   rlang::arg_match(time_zone, OlsonNames())
-  purrr::modify_at(
-    load_object(object, "page_views", class_id),
-    "dt_accessed",
-    readr::parse_datetime,
-    locale = readr::locale(tz = time_zone)
-  )
+  load_object(object, "page_views", class_id) %>%
+    purrr::modify_at("dt_accessed", parse_datetime, tzone = time_zone)
 }
 
 #' @rdname process_auxillary
 #' @export
 process_media_views <- function(object, time_zone = "UTC", class_id = NULL) {
   rlang::arg_match(time_zone, OlsonNames())
+
+  datetimes <- c("dt_started", "dt_last_event")
+  doubles <- c("proportion_video", "proportion_time")
+
+  # parsers located at process_function_helpers
   load_object(object, "media_views", class_id) %>%
-    purrr::modify_at(
-      c("dt_started", "dt_last_event"),
-      readr::parse_datetime,
-      locale = readr::locale(tz = time_zone)
-    ) %>%
-    purrr::modify_at(
-      c("proportion_video", "proportion_time"),
-      readr::parse_double
-    ) %>%
-    purrr::modify_at(
-      "log_json",
-      safe_convert_json
-    )
+    purrr::modify_at(datetimes, parse_datetime, tzone = time_zone) %>%
+    purrr::modify_at(doubles, parse_double) %>%
+    purrr::modify_at("log_json", safe_convert_json)
 }
 
 #' @rdname process_auxillary
 #' @export
 process_items <- function(object, class_id = NULL) {
   load_object(object, "items", class_id) %>%
-    purrr::modify_at("lrn_question_position", readr::parse_integer) %>%
+    purrr::modify_at("lrn_question_position", parse_integer) %>%
     purrr::modify_at("lrn_question_data", safe_convert_json)
 }
 

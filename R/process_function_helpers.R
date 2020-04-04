@@ -19,3 +19,11 @@ ensure_columns <- function(data, required_columns, signal, message_prefix = "") 
 
   invisible(!any(missing_required_cols))
 }
+
+strip_alpha <- function(x) stringr::str_remove_all(x, '[^0-9.-]')
+parse_double <- function(x) vctrs::vec_cast(strip_alpha(x), double())
+parse_integer <- function(x) vctrs::vec_cast(parse_double(x), integer())
+parse_datetime <- function(x, tzone = 'UTC') {
+  new <- vctrs::vec_cast(x, vctrs::new_datetime(tzone = 'UTC'))
+  structure(new, tzone = tzone)
+}

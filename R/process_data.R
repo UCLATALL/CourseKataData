@@ -52,9 +52,9 @@ process_data <- function(path, split_responses = FALSE) {
   assign("responses", process_responses(path), pos = 1)
   if (split_responses) {
     responses <- split_responses(responses)
-    assign("surveys", responses$surveys, pos = 1)
-    assign("quizzes", responses$quizzes, pos = 1)
-    assign("in_text", responses$in_text, pos = 1)
+    assign("surveys", responses[['surveys']], pos = 1)
+    assign("quizzes", responses[['quizzes']], pos = 1)
+    assign("in_text", responses[['in_text']], pos = 1)
     remove(responses, pos = 1)
   }
 

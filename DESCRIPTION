@@ -1,6 +1,6 @@
 Package: CourseKataData
 Title: Work With Data From CourseKata Data Science Classes
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
     person(given = "Adam",
            family = "Blake",
@@ -20,18 +20,17 @@ Depends:
     R (>= 3.2)
 Imports: 
     magrittr,
-    zip,
     fs,
-    readr,
+    rlang,
+    vctrs,
     jsonlite,
     stringr,
-    purrr,
     tibble,
-    rlang
+    purrr
 Suggests: 
     testthat (>= 2.1.0),
     covr,
-    vctrs,
+    zip,
     dplyr
 LazyData: true
 Roxygen: list(markdown = TRUE)

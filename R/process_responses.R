@@ -91,25 +91,17 @@ ensure_data_in_responses <- function(responses) {
 #' @seealso process_responses
 #' @export
 convert_types_in_responses <- function(responses, time_zone = "UTC") {
+  integers <- c("attempt", "lrn_question_position")
+  doubles <- c("points_possible", "points_earned")
+  datetimes <- c("dt_submitted", "lrn_dt_started", "lrn_dt_saved")
+
+  # parsers located in process_function_helpers.R
   converted <- responses %>%
     purrr::modify(as.character) %>% # prevent probs from stringsAsFactors
-    purrr::modify_at(
-      c("attempt", "lrn_question_position"),
-      readr::parse_integer
-    ) %>%
-    purrr::modify_at(
-      c("points_possible", "points_earned"),
-      readr::parse_number
-    ) %>%
-    purrr::modify_at(
-      c("dt_submitted", "lrn_dt_started", "lrn_dt_saved"),
-      readr::parse_datetime,
-      locale = readr::locale(tz = time_zone)
-    ) %>%
-    purrr::modify_at(
-      "lrn_response_json",
-      safe_convert_json
-    )
+    purrr::modify_at(integers, parse_integer) %>%
+    purrr::modify_at(doubles, parse_double) %>%
+    purrr::modify_at(datetimes, parse_datetime, tzone = time_zone) %>%
+    purrr::modify_at("lrn_response_json", safe_convert_json)
 
   attributes(converted) <- attributes(responses)
   tibble::as_tibble(converted)
@@ -195,9 +187,8 @@ map_response <- function(response, reference, lookup_table) {
     return(NA_character_)
   }
 
-  option_numbers <- stringr::str_split(response, ",", simplify = TRUE) %>%
-    readr::parse_number()
-
+  option_numbers <- stringr::str_split(response, ",")[[1]] %>%
+    parse_integer()
   lookup_table[item_row, option_numbers + 2] %>%
     unlist() %>%
     paste(collapse = "; ")
