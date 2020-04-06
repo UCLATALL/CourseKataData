@@ -13,7 +13,7 @@
 #'   - the path to an extracted data download directory
 #'   - the path to a specific CSV file (e.g. `classes.csv`)
 #'   - the `data.frame` loaded from a CSV file
-#' @param time_zone The time zone to use when parsing datetime objects (see
+#' @param time_zone The time zone to use when parsing date-time objects (see
 #'   \code{\link{timezones}}).
 #' @param class_id (Optional) A character vector of the IDs of specific classes
 #'   you want to extract data for. These values should correspond to the names

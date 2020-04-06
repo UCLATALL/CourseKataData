@@ -29,7 +29,7 @@ variety of options:
 \item the \code{data.frame} loaded from a CSV file
 }}
 
-\item{time_zone}{The time zone to use when parsing datetime objects (see
+\item{time_zone}{The time zone to use when parsing date-time objects (see
 \code{\link{timezones}}).}
 
 \item{class_id}{(Optional) A character vector of the IDs of specific classes
