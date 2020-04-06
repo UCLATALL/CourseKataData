@@ -1,6 +1,5 @@
 context("Processing media views")
 
-library(dplyr)
 library(fs)
 library(zip)
 library(vctrs)
@@ -11,7 +10,7 @@ unprocessed <- read.csv(filepath, stringsAsFactors = FALSE)
 processed <- process_media_views(read.csv(filepath, stringsAsFactors = FALSE))
 
 # single in temp zip
-fs::file_copy(filepath, path_temp(filename))
+file_copy(filepath, path_temp(filename))
 zip_file <- file_temp(ext = ".zip")
 zipr(zip_file, path_temp(filename))
 
@@ -106,7 +105,7 @@ test_that("data can be loaded from a course zip file", {
 test_that("data can be loaded from a directory", {
   expect_identical(
     process_media_views(top_dir),
-    bind_rows(processed, processed)
+    rbind(processed, processed)
   )
 })
 

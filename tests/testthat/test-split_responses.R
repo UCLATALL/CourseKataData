@@ -1,8 +1,6 @@
 context("Splitting responses")
 
-library(dplyr)
-
-mock_responses <- tibble(
+mock_responses <- tibble::tibble(
   item_id = c(
     "Presurvey_101_other_text", "Postsurvey_101_other_text",
     "Ch1_Practice_Quiz", "Ch6_Practice_Quiz_2",
@@ -13,8 +11,6 @@ mock_responses <- tibble(
 split <- split_responses(mock_responses)
 
 test_that("responses are split into named tibbles", {
-  split <- split_responses(mock_responses)
-
   expect_is(split, "list")
   expect_is(split$surveys, "tbl_df")
   expect_is(split$in_text, "tbl_df")
@@ -41,12 +37,11 @@ test_that("all other items end up in in_text", {
 })
 
 test_that("all responses are accounted for", {
-  mock_responses <- mock_responses %>%
-    dplyr::mutate(rownames = rownames(.))
+  rownames <- as.integer(rownames(mock_responses))
+  mock_responses[['rownames']] <- rownames
   split <- split_responses(mock_responses)
+  spliced <- purrr::reduce(split, rbind) %>%
+    .[match(rownames, .[['rownames']]), ]
 
-  expect_identical(
-    bind_rows(split) %>% arrange(rownames),
-    mock_responses %>% arrange(rownames)
-  )
+  expect_identical(spliced, mock_responses)
 })

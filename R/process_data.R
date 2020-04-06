@@ -50,6 +50,7 @@ process_data <- function(path, split_responses = FALSE) {
   assign("items", process_items(path), pos = 1)
   assign("tags", process_tags(path), pos = 1)
   assign("responses", process_responses(path), pos = 1)
+
   if (split_responses) {
     responses <- split_responses(responses)
     assign("surveys", responses[['surveys']], pos = 1)

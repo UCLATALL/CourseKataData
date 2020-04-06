@@ -1,6 +1,5 @@
 context("Processing page_views")
 
-library(dplyr)
 library(fs)
 library(zip)
 library(vctrs)
@@ -8,10 +7,10 @@ library(vctrs)
 filename <- "page_views.csv"
 filepath <- data_file(filename)
 unprocessed <- read.csv(filepath, stringsAsFactors = FALSE)
-processed <- process_page_views(read.csv(filepath, stringsAsFactors = FALSE))
+processed <- process_page_views(unprocessed)
 
 # single in temp zip
-fs::file_copy(filepath, path_temp(filename))
+file_copy(filepath, path_temp(filename))
 zip_file <- file_temp(ext = ".zip")
 zipr(zip_file, path_temp(filename))
 
@@ -78,7 +77,7 @@ test_that("data can be loaded from a course zip file", {
 test_that("data can be loaded from a directory", {
   expect_identical(
     process_page_views(top_dir),
-    bind_rows(processed, processed)
+    rbind(processed, processed)
   )
 })
 

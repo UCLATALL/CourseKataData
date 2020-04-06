@@ -1,9 +1,9 @@
 context("Processing responses")
 
-library(dplyr)
-library(vctrs)
 library(fs)
 library(zip)
+library(tibble)
+library(vctrs)
 
 mock_response_looktbl <- data.frame(
   student_id = 1,
@@ -264,21 +264,20 @@ test_that("the lookup table includes minimum information for mapping", {
 })
 
 test_that("the lookup table only includes multiple choice questions", {
-  mcq_item_ids <- mock_response_looktbl %>%
-    filter(lrn_type == "mcq") %>%
-    .[["lrn_question_reference"]]
+  mcq_pos <- with(mock_response_looktbl, lrn_type == 'mcq')
+  mcq_item_ids <- mock_response_looktbl[["lrn_question_reference"]][mcq_pos]
 
   actual <- map_response_options(mock_response_looktbl) %>%
     attr("option_value_table")
 
-  testthat::expect_true(all(actual$lrn_question_reference %in% mcq_item_ids))
+  expect_true(all(actual[['lrn_question_reference']] %in% mcq_item_ids))
 })
 
 test_that("the lookup table only has unique entries", {
-  expected <- mock_response_looktbl %>%
-    distinct(lrn_question_reference, lrn_type) %>%
-    filter(lrn_type == "mcq") %>%
-    nrow()
+  mcq_pos <- with(mock_response_looktbl, lrn_type == 'mcq')
+  expected <- mock_response_looktbl[['lrn_question_reference']][mcq_pos] %>%
+    unique() %>%
+    length()
 
   map_response_options(mock_response_looktbl) %>%
     attr("option_value_table") %>%
@@ -387,7 +386,7 @@ test_that("responses can be processed from a directory path", {
 test_that("multiple response tables can be processed from a directory path", {
   expect_identical(
     process_responses(top_dir),
-    bind_rows(mock_responses_integration, mock_responses_integration) %>%
+    rbind(mock_responses_integration, mock_responses_integration) %>%
       process_responses()
   )
 })
@@ -395,7 +394,7 @@ test_that("multiple response tables can be processed from a directory path", {
 test_that("responses can be processed from a zip file", {
   expect_identical(
     process_responses(zip_file),
-    bind_rows(mock_responses_integration, mock_responses_integration) %>%
+    rbind(mock_responses_integration, mock_responses_integration) %>%
       process_responses()
   )
 })
@@ -410,7 +409,7 @@ test_that("responses can be processed from a specific class in a directory", {
 test_that("responses can be processed from a multiple classes in a directory", {
   expect_identical(
     process_responses(top_dir, class_id = c("class_1", "class_2")),
-    bind_rows(mock_responses_integration, mock_responses_integration) %>%
+    rbind(mock_responses_integration, mock_responses_integration) %>%
       process_responses()
   )
 })

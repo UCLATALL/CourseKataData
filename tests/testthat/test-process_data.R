@@ -1,12 +1,11 @@
 context("Processing full data download")
 
-library(dplyr)
 library(fs)
 library(zip)
 
 ex_dir <- path_temp("some_path")
 zip_file <- data_file("zipped.zip")
-zip::unzip(data_file("zipped.zip"), exdir = ex_dir)
+unzip(data_file("zipped.zip"), exdir = ex_dir)
 
 test_that("it will load all of the data and create six data frames", {
   suppressWarnings(process_data(ex_dir))

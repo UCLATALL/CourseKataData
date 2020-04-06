@@ -1,5 +1,3 @@
-library(fs)
-
 #' Get the path to the test data directory
 #'
 #' Check to see if you are running R interactively and then return the
@@ -7,7 +5,7 @@ library(fs)
 #'
 #' @return The relative path to the test data directory.
 data_dir <- function() {
-  path(if (interactive()) "tests" else "..", "data")
+  fs::path(if (interactive()) "tests" else "..", "data")
 }
 
 
@@ -17,7 +15,7 @@ data_dir <- function() {
 #'
 #' @return The relative file path to the data file in the test data directory.
 data_file <- function(file_name) {
-  path(data_dir(), file_name)
+  fs::path(data_dir(), file_name)
 }
 
 
@@ -33,7 +31,7 @@ data_file <- function(file_name) {
 expect_nrow <- function(object, n) {
   stopifnot(is.data.frame(object), is.numeric(n), length(n) == 1)
 
-  act <- testthat::quasi_label(enquo(object))
+  act <- testthat::quasi_label(rlang::enquo(object))
   act$nrow <- nrow(act$val)
 
   testthat::expect(
@@ -55,6 +53,6 @@ expect_nrow <- function(object, n) {
 #' @family expectations
 #' @export
 expect_vectors_in_df <- function(object, vctrs, ptype = NULL, size = NULL) {
-  for (i in vctrs) expect_vector(object[[!!i]], ptype, size)
+  for (i in vctrs) testthat::expect_vector(object[[!!i]], ptype, size)
   invisible(object)
 }
