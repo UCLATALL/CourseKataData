@@ -8,5 +8,4 @@
 ^\.travis\.yml$
 ^codecov\.yml$
 ^\.covrignore$
-^GETTING_STARTED\.Rmd$
-^GETTING_STARTED\.md$
+^GETTING_STARTED\..*$

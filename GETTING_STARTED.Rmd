@@ -1,5 +1,13 @@
 ---
-output: github_document
+title: 'Using CourseKata Data'
+date: 'Last updated: `r Sys.Date()`'
+output: 
+  github_document: default
+  pdf_document: default
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding,
+  output_dir = '.', output_format = 'all') })
+suppress_badges: TRUE
 ---
 
 ```{r, include = FALSE}
@@ -45,13 +53,6 @@ write.csv(responses, 'path/to/save/the/csv/to', na = '', row.names = FALSE)
 
 The rest of this document is the full README that is included on the 'CourseKataData' repository. In addition to explaining some of the other functions in the package, there is a section that explains each of the variables in each of the downloaded data files (**Data Structure**).
 
-<br>
-<br>
-<br>
---------------------------------------------------------------------------------
-<br>
-<br>
-<br>
+<br> <br> ------------------------------------------------------------ <br> <br>
 
-```{r child = 'README.Rmd'}
-```
+`r knitr::knit_child('README.Rmd', envir = rlang::env(suppress_badges = TRUE))`

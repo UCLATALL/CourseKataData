@@ -6,9 +6,9 @@
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/UCLATALL/CourseKataData/workflows/R-CMD-check/badge.svg)](https://github.com/UCLATALL/CourseKataData/actions)
+status](https://github.com/UCLATALL/CourseKataData/workflows/R-CMD-check/badge.svg)](https://github.com/UCLATALL/CourseKataData/actions),
 [![Codecov test
-coverage](https://codecov.io/gh/UCLATALL/CourseKataData/branch/master/graph/badge.svg)](https://codecov.io/gh/UCLATALL/CourseKataData?branch=master)
+coverage](https://codecov.io/gh/UCLATALL/CourseKataData/branch/master/graph/badge.svg)](https://codecov.io/gh/UCLATALL/CourseKataData?branch=master),
 [![CRAN
 status](https://www.r-pkg.org/badges/version/CourseKataData)](https://CRAN.R-project.org/package=CourseKataData)
 <!-- badges: end -->

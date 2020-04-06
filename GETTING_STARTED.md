@@ -1,3 +1,6 @@
+Using CourseKata Data
+================
+Last updated: 2020-04-05
 
 # Getting Started
 
@@ -48,7 +51,7 @@ The rest of this document is the full README that is included on the
 other functions in the package, there is a section that explains each of
 the variables in each of the downloaded data files (**Data Structure**).
 
-<br> <br> <br> ——————————————————————————– <br> <br> <br>
+<br> <br> ———————————————————— <br> <br>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -56,12 +59,6 @@ the variables in each of the downloaded data files (**Data Structure**).
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/UCLATALL/CourseKataData/workflows/R-CMD-check/badge.svg)](https://github.com/UCLATALL/CourseKataData/actions)
-[![Codecov test
-coverage](https://codecov.io/gh/UCLATALL/CourseKataData/branch/master/graph/badge.svg)](https://codecov.io/gh/UCLATALL/CourseKataData?branch=master)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/CourseKataData)](https://CRAN.R-project.org/package=CourseKataData)
 <!-- badges: end -->
 
 The goal of CourseKataData is to help researchers working with
