@@ -49,6 +49,15 @@ write.csv(responses, 'path/to/save/the/csv/to', na = '', row.names = FALSE)
 # make sure you export all the data you need
 ```
 
+## Automatically Merge Multiple Downloads
+
+If you have downloaded multiple data download zip files from CourseKata, don't worry, this package takes care of merging the files for you. To load multiple data downloads into R, specify a vector of zip files or directories to load:
+
+```{r, eval=FALSE}
+zip_paths <- c("path/to/first/zip", "path/to/second/zip", "path/to/a/directory")
+process_data(zip_paths)
+```
+
 ## More Detail
 
 The rest of this document is the full README that is included on the 'CourseKataData' repository. In addition to explaining some of the other functions in the package, there is a section that explains each of the variables in each of the downloaded data files (**Data Structure**).

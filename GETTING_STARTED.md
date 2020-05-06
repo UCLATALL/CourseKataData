@@ -1,6 +1,6 @@
 Using CourseKata Data
 ================
-Last updated: 2020-04-05
+Last updated: 2020-05-06
 
 # Getting Started
 
@@ -42,6 +42,18 @@ the following code:
 write.csv(responses, 'path/to/save/the/csv/to', na = '', row.names = FALSE)
 # responses is only one of the objects that is created by process_data()
 # make sure you export all the data you need
+```
+
+## Automatically Merge Multiple Downloads
+
+If you have downloaded multiple data download zip files from CourseKata,
+don’t worry, this package takes care of merging the files for you. To
+load multiple data downloads into R, specify a vector of zip files or
+directories to load:
+
+``` r
+zip_paths <- c("path/to/first/zip", "path/to/second/zip", "path/to/a/directory")
+process_data(zip_paths)
 ```
 
 ## More Detail
@@ -122,6 +134,18 @@ are created:
 If there is already an R object with one of these names, you will be
 given the opportunity to abort the processing or overwrite the existing
 object.
+
+### Automatically Merge Multiple Downloads
+
+If you have downloaded multiple data download zip files from CourseKata,
+don’t worry, this package takes care of merging the files for you. To
+load multiple data downloads into R, specify a vector of zip files or
+directories to load:
+
+``` r
+zip_paths <- c("path/to/first/zip", "path/to/second/zip", "path/to/a/directory")
+process_data(zip_paths)
+```
 
 #### Time Zones
 

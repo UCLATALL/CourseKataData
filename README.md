@@ -75,6 +75,18 @@ If there is already an R object with one of these names, you will be
 given the opportunity to abort the processing or overwrite the existing
 object.
 
+### Automatically Merge Multiple Downloads
+
+If you have downloaded multiple data download zip files from CourseKata,
+don’t worry, this package takes care of merging the files for you. To
+load multiple data downloads into R, specify a vector of zip files or
+directories to load:
+
+``` r
+zip_paths <- c("path/to/first/zip", "path/to/second/zip", "path/to/a/directory")
+process_data(zip_paths)
+```
+
 #### Time Zones
 
 By default the data is parsed using the “UTC” time zone. If you would
