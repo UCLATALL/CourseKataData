@@ -25,6 +25,6 @@ strip_alpha <- function(x) stringr::str_remove_all(x, '[^0-9.-]')
 parse_double <- function(x) vctrs::vec_cast(strip_alpha(x), double())
 parse_integer <- function(x) vctrs::vec_cast(parse_double(x), integer())
 parse_datetime <- function(x, tzone = 'UTC') {
-  new <- vctrs::vec_cast(x, vctrs::new_datetime(tzone = 'UTC'))
-  structure(new, tzone = tzone)
+  dt <- as.POSIXct(x, format = "%Y-%m-%d %H:%M:%OS", tz = 'UTC')
+  structure(dt, tzone = tzone)
 }
