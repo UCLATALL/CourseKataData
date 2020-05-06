@@ -1,5 +1,3 @@
-context("Processing full data download")
-
 library(fs)
 library(zip)
 

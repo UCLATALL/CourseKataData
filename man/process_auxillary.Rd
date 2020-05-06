@@ -9,7 +9,7 @@
 \alias{process_tags}
 \title{Processing functions for all auxillary (non-response) data.}
 \usage{
-process_classes(object)
+process_classes(object, class_id = NULL)
 
 process_page_views(object, time_zone = "UTC", class_id = NULL)
 
@@ -26,24 +26,24 @@ variety of options:
 \item the path to a CourseKata data download zip file
 \item the path to an extracted data download directory
 \item the path to a specific CSV file (e.g. \code{classes.csv})
-\item the \code{data.frame} loaded from a CSV file
+\item the \code{data.frame} loaded from a CSV file (useful for writing unit tests)
 }}
-
-\item{time_zone}{The time zone to use when parsing date-time objects (see
-\code{\link{timezones}}).}
 
 \item{class_id}{(Optional) A character vector of the IDs of specific classes
 you want to extract data for. These values should correspond to the names
 of the directories where the desired CSV files can be found in the original
 data download.}
+
+\item{time_zone}{The time zone to use when parsing date-time objects (see
+\code{\link{timezones}}).}
 }
 \value{
-These functions will always return a \code{\link{tibble}} of the
-data you are processing, where each row describes the data named in the
-function's name, e.g. \code{process_classes()} returns a \code{tibble} with rows
-describing classes. For descriptions of each of variables in each of the
-tables, see the README for this package (included in the data download or
-online at \url{https://github.com/UCLATALL/CourseKataData}).
+These functions will always return a \code{\link{tibble}} of the data
+you are processing. Each row of the resulting \code{tibble}, describes the type
+of data named by the function, e.g. \code{process_classes()} returns a \code{tibble}
+with rows describing \emph{classes}. For descriptions of each of variables in
+each of the tables, see the README for this package (included in the data
+download or online at \url{https://github.com/UCLATALL/CourseKataData}).
 }
 \description{
 These functions are for individually processing the auxillary components of a

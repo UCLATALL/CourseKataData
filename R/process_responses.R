@@ -21,7 +21,7 @@ process_responses <- function(object, time_zone = "UTC", class_id = NULL) {
   rlang::arg_match(time_zone, OlsonNames())
   stopifnot(is.character(class_id) || is.null(class_id))
 
-  load_data(object, "responses[.]csv$", class_id) %>%
+  load_data(object, "responses[.]csv$", class_id = class_id) %>%
     ensure_data_in_responses() %>%
     convert_types_in_responses(time_zone = time_zone) %>%
     map_response_options()

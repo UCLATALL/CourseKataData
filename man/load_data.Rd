@@ -4,7 +4,7 @@
 \alias{load_data}
 \title{Load file(s) from a directory, zipped directory, or file path.}
 \usage{
-load_data(object, regexp, class_id = NULL, limit_search = NULL)
+load_data(object, regexp = ".*", class_id = NULL)
 }
 \arguments{
 \item{object}{The object to process the data from. This can be one of a
@@ -17,24 +17,29 @@ variety of options:
 }}
 
 \item{regexp}{If \code{object} is a directory or zipped directory, a
-\code{\link{regex}} pattern indicating which file names to search for.}
+\code{\link{regex}} pattern indicating which file names to search for. The
+default value \code{'.*'} matches all files.}
 
-\item{class_id}{A character vector of the class ID(s) to load.}
-
-\item{limit_search}{If \code{object} is a directory or zipped directory, an
-integer indicating how many files to match, e.g. \code{1} indicates that only
-the first file found should be loaded. \code{NULL}, the default, uses all files
-that \code{regexp} matches.}
+\item{class_id}{(Optional) A character vector of the IDs of specific classes
+you want to extract data for. These values should correspond to the names
+of the directories where the desired CSV files can be found in the original
+data download.}
 }
 \value{
-If the \code{object} is a \code{data.frame} it is cast to a
-\code{\link{tibble}}. If \code{object} is a path of some type, the files at the
-given location are matched against \code{regexp}, \code{class_id}, and
-\code{limit_search}, and then the matched files are are read in. As the files
-are read, the rows of each table are appended to the rows of the previous
-tables, yielding one merged table. The resulting data frame is returned as
-a \code{tibble}.
+The resulting data frame will always be returned as a
+\code{\link{tibble}} with all factor variables converted to character. If
+the \code{object} is a \code{data.frame} it will still be converted to a \code{tibble}. If
+\code{object} is a path of some type, the files at the given location are
+filtered against \code{regexp} and \code{class_id}, and then read in. As the files
+are read, the rows of each table are merged int a single \code{tibble}.
 }
 \description{
 Load file(s) from a directory, zipped directory, or file path.
 }
+\section{TODO}{
+ It might be useful to vectorize on all args not just \code{object}.
+For \code{class_id} this would mean allowing a character vector (non-vectorized
+method) or a list of character vectors (vectorizing on the list). This
+seems better accomplished using something like \code{purrr} though.
+}
+

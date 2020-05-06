@@ -1,5 +1,3 @@
-context("Processing responses")
-
 library(fs)
 library(zip)
 library(tibble)

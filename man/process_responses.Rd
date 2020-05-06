@@ -13,7 +13,7 @@ variety of options:
 \item the path to a CourseKata data download zip file
 \item the path to an extracted data download directory
 \item the path to a specific CSV file (e.g. \code{classes.csv})
-\item the \code{data.frame} loaded from a CSV file
+\item the \code{data.frame} loaded from a CSV file (useful for writing unit tests)
 }}
 
 \item{time_zone}{The time zone to use when parsing date-time objects (see

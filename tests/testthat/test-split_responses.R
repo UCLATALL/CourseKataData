@@ -1,5 +1,3 @@
-context("Splitting responses")
-
 mock_responses <- tibble::tibble(
   item_id = c(
     "Presurvey_101_other_text", "Postsurvey_101_other_text",
