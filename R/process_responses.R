@@ -59,8 +59,8 @@ ensure_data_in_responses <- function(responses) {
 
   # give off some useful warning if data is missing
   if (nrow_missing > 0) {
-    rlang::warn(sprintf(
-      "Dropped %d %s missing data at either class_id, student_id, or prompt.",
+    rlang::inform(sprintf(
+      "Dropped %d %s missing data at either class_id, student_id, or prompt. (This is OK.)",
       nrow_missing, ngettext(nrow_missing, "row", "rows")
     ))
   }

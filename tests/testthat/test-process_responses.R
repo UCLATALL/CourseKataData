@@ -141,7 +141,7 @@ test_that("response tables missing required columns throw informative errors", {
   )
 })
 
-test_that("responses with a missing class_id are dropped with warning", {
+test_that("responses with a missing class_id are dropped with message", {
   mock_response <- data.frame(
     class_id = NA,
     student_id = 1,
@@ -149,13 +149,13 @@ test_that("responses with a missing class_id are dropped with warning", {
   )
 
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_warning(
+  expect_message(
     ensure_data_in_responses(mock_response),
     "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
-test_that("responses with a missing student_id are dropped with warning", {
+test_that("responses with a missing student_id are dropped with message", {
   mock_response <- data.frame(
     class_id = 1,
     student_id = NA,
@@ -163,13 +163,13 @@ test_that("responses with a missing student_id are dropped with warning", {
   )
 
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_warning(
+  expect_message(
     ensure_data_in_responses(mock_response),
     "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
-test_that("responses with a missing prompt are dropped with warning", {
+test_that("responses with a missing prompt are dropped with message", {
   mock_response <- data.frame(
     class_id = 1,
     student_id = 1,
@@ -177,13 +177,13 @@ test_that("responses with a missing prompt are dropped with warning", {
   )
 
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_warning(
+  expect_message(
     ensure_data_in_responses(mock_response),
     "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
-test_that("responses with multiple missing values have comprehensive warning", {
+test_that("responses with multiple missing values have comprehensive message", {
   mock_response <- data.frame(
     class_id = NA,
     student_id = NA,
@@ -191,7 +191,7 @@ test_that("responses with multiple missing values have comprehensive warning", {
   )
 
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_warning(
+  expect_message(
     ensure_data_in_responses(mock_response),
     "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
@@ -205,13 +205,13 @@ test_that("empty strings are treated like NA when ensuring required columns", {
   )
 
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_warning(
+  expect_message(
     ensure_data_in_responses(mock_response),
     "Dropped 1 row missing data at either class_id, student_id, or prompt"
   )
 })
 
-test_that("multiple dropped responses have a comprehensive warning", {
+test_that("multiple dropped responses have a comprehensive message", {
   mock_response <- data.frame(
     class_id = c(NA, NA, 1, 1),
     student_id = c(NA, 1, NA, 1),
@@ -219,7 +219,7 @@ test_that("multiple dropped responses have a comprehensive warning", {
   )
 
   expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 1)
-  expect_warning(
+  expect_message(
     ensure_data_in_responses(mock_response),
     "Dropped 3 rows missing data at either class_id, student_id, or prompt"
   )
