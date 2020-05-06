@@ -49,11 +49,11 @@ test_that('a file vector can be filtered by regexp when loading', {
   expect_identical(object, expected)
 })
 
-test_that('a file vector can be filtered by class_id when loading', {
-  object <- load_data(test_files, class_id = 1)
-  expected <- load_data(test_dfs(2))
-  expect_identical(object, expected)
-})
+# test_that('a file vector can be filtered by class_id when loading', {
+#   object <- load_data(test_files, class_id = 1)
+#   expected <- load_data(test_dfs(2))
+#   expect_identical(object, expected)
+# })
 
 test_that('a file vector can be filtered by multiple class_ids when loading', {
   object <- load_data(test_files, class_id = 1:2)
