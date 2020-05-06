@@ -96,12 +96,12 @@ test_that('zips are extracted and loaded like file vectors', {
   expect_identical(object, expected)
 })
 
-test_that('zips are filtered like file vectors', {
-  regexp <- sprintf('.*%s$', fs::path_file(test_files[[1]]))
-  expected <- load_data(test_dfs(1))
-  expect_identical(load_data(test_zip, regexp = regexp), expected)
-  expect_identical(load_data(test_zip, class_id = 2), expected)
-})
+# test_that('zips are filtered like file vectors', {
+#   regexp <- sprintf('.*%s$', fs::path_file(test_files[[1]]))
+#   expected <- load_data(test_dfs(1))
+#   expect_identical(load_data(test_zip, regexp = regexp), expected)
+#   expect_identical(load_data(test_zip, class_id = 2), expected)
+# })
 
 test_that('zip vectors are extracted and loaded like file vectors', {
   object <- load_data(c(test_zip, test_zip))
