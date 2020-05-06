@@ -39,6 +39,8 @@ load_data <- function(object, regexp = '.*', class_id = NULL) {
   }
 
   if (is.character(object)) {
+    object <- fs::path_expand(object)
+
     # predicate for map_if
     is_zip_file <- function(path) {
       fs::is_file(path) & fs::path_ext(path) == 'zip'
