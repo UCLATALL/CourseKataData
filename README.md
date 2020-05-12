@@ -13,6 +13,11 @@ coverage](https://codecov.io/gh/UCLATALL/CourseKataData/branch/master/graph/badg
 status](https://www.r-pkg.org/badges/version/CourseKataData)](https://CRAN.R-project.org/package=CourseKataData)
 <!-- badges: end -->
 
+This is the **source code** for CourseKataData. If you are trying to
+learn more about the contents of the actual data, how to use this
+package, or how other researchers are using this package, **head to the
+[Wiki](https://github.com/UCLATALL/CourseKataData/wiki).**
+
 The goal of CourseKataData is to help researchers working with
 CourseKata courses on data science, statistics, and modeling. The data
 downloaded from [CourseKata](https://www.coursekata.org) can be useful
@@ -184,177 +189,6 @@ The part functions are purely functional, which means that they can be
 run in any order. If you alter the response data and and a function
 doesn’t know how to handle it any more, it will tell you what is missing
 or needed.
-
-# Data Structure
-
-Data downloaded from [CourseKata](https://www.coursekata.org) comes in a
-zip file with following the structure (this example assumes data for two
-classes were downloaded):
-
-    [datetime of download]
-    |   classes.csv
-    |   README.pdf
-    |  
-    \---classes
-        +---[class id of the first class]
-        |       items.csv
-        |       media_views.csv
-        |       page_views.csv
-        |       responses.csv
-        |       tags.csv
-        |          
-        \--- [class id of the next class]  
-                items.csv
-                media_views.csv
-                page_views.csv
-                responses.csv
-                tags.csv
-
-Each of the following six sections will describe what you should expect
-in each of the `.csv` files.
-
-## `classes.csv`
-
-The classes data is organized into a table with a single row for each
-class included in the data download. Note that each of the `class_id`
-values will correspond to the name of a subfolder in the `classes`
-folder. Here is a description of each variable in the classes table:
-
-|           Column | Description                                                                                                        |
-| ---------------: | :----------------------------------------------------------------------------------------------------------------- |
-|    **class\_id** | a unique identifier for this particular class                                                                      |
-| **course\_name** | the GitHub repository for the course                                                                               |
-|      **release** | the GitHub branch for the course                                                                                   |
-|  **teacher\_id** | a unique identifier for the teacher on CourseKata                                                                  |
-|          **lms** | the Learning Managment System the class was deployed on                                                            |
-|  **setup\_yaml** | a JSON string including the full structure of the course (converted to a `list` object when the data is processed) |
-
-## `responses.csv`
-
-The response data is organized into a table with a variable number of
-columns (depending on `lrn_option_<n>`, see column description below)
-and a number of rows equivalent to the number of responses made to
-questions in the course. This table will likely be very large (200
-students will yield around 300,000 responses). Here is a description of
-each variable in the responses table:
-
-|                          Column | Description                                                                                                                                                                                                                                     |
-| ------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|                   **class\_id** | a unique identifier for this particular class                                                                                                                                                                                                   |
-|                **course\_name** | the GitHub repository for the course                                                                                                                                                                                                            |
-|                     **release** | the GitHub branch for the course                                                                                                                                                                                                                |
-|                 **student\_id** | a unique identifier for each student on CourseKata                                                                                                                                                                                              |
-|                    **item\_id** | a unique identifier for this particular question                                                                                                                                                                                                |
-|                  **item\_type** | whether this is a *learnosity* or *datacamp* item                                                                                                                                                                                               |
-|                     **chapter** | the chapter that the item appears in                                                                                                                                                                                                            |
-|                        **page** | the page that the item appears on                                                                                                                                                                                                               |
-|                      **prompt** | the question prompt for this response                                                                                                                                                                                                           |
-|                    **response** | the value of the response: either the value (for shorttext, plaintext, ratings, datacamp, etc.) or an array of numbers indicating the position of the multiple choice answers chosen and which correspond to the columns `lrn_option_<number>`. |
-|            **points\_possible** | the number of points possible if the completely correct answer is given                                                                                                                                                                         |
-|              **points\_earned** | the number of points earned                                                                                                                                                                                                                     |
-|               **dt\_submitted** | a datetime object indicating when the response was submitted (timezone: GMT/UTC)                                                                                                                                                                |
-|                     **attempt** | the number of times the question has been attempted, including the current attempt                                                                                                                                                              |
-|                 **user\_agent** | the browser user agent string for the user (see for details: <https://developer.chrome.com/multidevice/user-agent>; also, this R package for parsing: `uaparserjs`)                                                                             |
-|            **lrn\_session\_id** | the unique ID for this user session on Learnosity                                                                                                                                                                                               |
-|           **lrn\_response\_id** | the unique ID for this particular response on Learnosity                                                                                                                                                                                        |
-|    **lrn\_items\_api\_version** | the version of the Learnosity Items API for this item                                                                                                                                                                                           |
-| **lrn\_response\_api\_version** | the version of the Learnosity Response API for this response                                                                                                                                                                                    |
-|           **lrn\_activity\_id** | the unique ID for the activity on Learnosity                                                                                                                                                                                                    |
-|    **lrn\_question\_reference** | the unique ID for the question on Learnosity                                                                                                                                                                                                    |
-|     **lrn\_question\_position** | for multi-question items, the position of the question in the item                                                                                                                                                                              |
-|                   **lrn\_type** | the Learnosity type of the question (e.g. mcq, shorttext, plaintext, rating, etc.)                                                                                                                                                              |
-|            **lrn\_dt\_started** | a datetime object indicating when the responses was started (timezone: GMT/UTC)                                                                                                                                                                 |
-|              **lrn\_dt\_saved** | a datetime object indicating when the responses was saved (timezone: GMT/UTC)                                                                                                                                                                   |
-|                 **lrn\_status** | the status of the question response on Learnosity (e.g. “Completed”)                                                                                                                                                                            |
-|            **lrn\_option\_<n>** | for multiple choice questions (`lrn_type`: “mcq”), the value of the option at position *`n`*                                                                                                                                                    |
-|         **lrn\_response\_json** | the fully-detailed JSON response object (converted to a `list` object when the data is processed)                                                                                                                                               |
-
-*For more about the distinction between Learnosity Activities, Items,
-and Questions, see the documentation at
-<https://authorguide.learnosity.com/hc/en-us>.*
-
-## `page_views.csv`
-
-The page view data comes in a table of student-page-datetime cases. That
-is, there is a row for every time a student accessed a page in the
-course. The table has five variables:
-
-|           Column | Description                                                                 |
-| ---------------: | :-------------------------------------------------------------------------- |
-|    **class\_id** | a unique identifier for this particular class                               |
-|  **student\_id** | a unique identifier for each student on CourseKata                          |
-|      **chapter** | the chapter the page view occurred in                                       |
-|         **page** | the page that was viewed                                                    |
-| **dt\_accessed** | a datetime object indicating when the page was accessed (timezone: GMT/UTC) |
-
-## `media_views.csv`
-
-The media view data refers to student interactions with the videos in
-the course. It comes in a table of student-video cases. That is, there
-is a row for each video for each student. The table has five variables:
-
-|                Column | Description                                                                                                                                                                                                                                                        |
-| --------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|         **class\_id** | a unique identifier for this particular class                                                                                                                                                                                                                      |
-|       **student\_id** | a unique identifier for each student on CourseKata                                                                                                                                                                                                                 |
-|           **chapter** | the chapter the video is in                                                                                                                                                                                                                                        |
-|              **page** | the page that the video is on                                                                                                                                                                                                                                      |
-|              **type** | the type of media object (currently only “video”)                                                                                                                                                                                                                  |
-|         **media\_id** | the unique identifier for the video                                                                                                                                                                                                                                |
-|       **dt\_started** | a datetime object indicating when the video was first started (timezone: GMT/UTC)                                                                                                                                                                                  |
-|   **dt\_last\_event** | a datetime object indicating when the video was last interacted with (timezone: GMT/UTC)                                                                                                                                                                           |
-| **proportion\_video** | the proportion of the video that student has watched, summed across all interactions with the video                                                                                                                                                                |
-|  **proportion\_time** | the proportion of the full video runtime that the student has spent watching a video, regardless of which part of the video they watched (e.g. if the video is 10 seconds long, and the student watches the first 5 seconds three times, this value should be 1.5) |
-|         **log\_json** | the fully-detailed JSON object about student interactions with the video (converted to a `list` object when the data is processed)                                                                                                                                 |
-
-## `items.csv`
-
-Items are organized in a table where each row represents all of the data
-for a particular question in the class. There are 18 columns in the
-table, though they will never *all* be relevant for a particular item.
-Columns prefixed with `dcl_` are only filled for DataCamp-Light items
-(the R-sandboxes) and columns prefixed with `lrn_` are only filled for
-Learnosity items. Here are descriptions of the columns in the table:
-
-|                       Column | Description                                                                                                    |
-| ---------------------------: | :------------------------------------------------------------------------------------------------------------- |
-|                **class\_id** | a unique identifier for this particular class                                                                  |
-|                 **item\_id** | a unique identifier for this particular question                                                               |
-|               **item\_type** | whether this is a **learnosity** or **datacamp** item                                                          |
-|                  **chapter** | the chapter that the item appears in                                                                           |
-|                     **page** | the page that the item appears on                                                                              |
-| **dcl\_pre\_exercise\_code** | the code run invisibly to set up the module                                                                    |
-|        **dcl\_sample\_code** | the code in the module when it first loads                                                                     |
-|            **dcl\_solution** | the code that appears in the solution tab                                                                      |
-|                 **dcl\_sct** | the solution checking code (see the `testwhat` package for details)                                            |
-|                **dcl\_hint** | the text that appears in the hint box                                                                          |
-| **lrn\_activity\_reference** | the unique ID for the activity on Learnosity                                                                   |
-| **lrn\_question\_reference** | the unique ID for the question on Learnosity                                                                   |
-|  **lrn\_question\_position** | for multi-question items, the position of the question in the item                                             |
-|      **lrn\_template\_name** | the template used to create the item                                                                           |
-| **lrn\_template\_reference** | a unique ID for the item template on Learnosity                                                                |
-|        **lrn\_item\_status** | the status of the item on Learnosity (e.g. “published”)                                                        |
-|      **lrn\_question\_data** | the fully-detailed JSON object that sets up the item (converted to a `list` object when the data is processed) |
-
-*For more about the distinction between Learnosity Activities, Items,
-and Questions, see the documentation at
-<https://authorguide.learnosity.com/hc/en-us>.*
-
-## `tags.csv`
-
-Tags are not currently utilized heavily within CourseKata but may have a
-larger role in the future (e.g. tagging specific learning outcomes). For
-completeness, the table is described here, but it will likely not be of
-much use.
-
-The tags table is organized at the item-tag level where each tag for
-each item has its own row. There are three columns in the table:
-
-|        Column | Description                                                                                  |
-| ------------: | :------------------------------------------------------------------------------------------- |
-|  **item\_id** | a unique identifier for this particular question                                             |
-|       **tag** | the tag given to this item                                                                   |
-| **tag\_type** | the hierarchical parent tag for this tag (e.g. “Chapter” holds all of the chapter name tags) |
 
 # Contributing
 
