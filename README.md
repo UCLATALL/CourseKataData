@@ -171,6 +171,46 @@ process_page_views(
 )
 ```
 
+### Export Data
+
+If you are not going to use R to perform your data analysis, you will
+likely want to export the processed data back to CSV or some other
+format. Note that many of the base functions in R will have trouble
+writing the processed data because many of the processed tables have
+list-columns. A list-column is a column of a data frame where each row /
+element is itself a `list`. Here is an example:
+
+``` r
+tbl_with_lists <- tibble::tibble(x = list(
+  # first element/row of column x
+  list(
+    list(1, 2, 3),
+    list(4, 5, 6)
+  ),
+  # second element/row of column x
+  list(
+    list(7, 8, 9)
+  )
+))
+```
+
+These columns need to be converted back to a format that can be written
+as a string if you want to export the data to CSV or a similar format
+that does not have clear rules for exporting lists. For convenience, the
+`convert_lists()` function is provided to help conversion, and the
+default CSV writer `utils::write.csv()` is masked with
+`CourseKataData::write.csv()` to use the converter. Here is an example
+using the converter:
+
+``` r
+convert_lists(tbl_with_lists)
+#> # A tibble: 2 x 1
+#>   x                            
+#>   <chr>                        
+#> 1 [[[1],[2],[3]],[[4],[5],[6]]]
+#> 2 [[[7],[8],[9]]]
+```
+
 ### Into the Deep with Responses
 
 The responses take a significant amount of processing. If you would like
