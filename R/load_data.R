@@ -77,9 +77,10 @@ load_data <- function(object, regexp = '.*', class_id = NULL) {
     lists_of_files <- purrr::map_if(files_and_dirs, fs::is_dir, dir_to_files)
     files <- stringr::str_subset(purrr::flatten_chr(lists_of_files), regexp)
 
-    if (length(files) == 0) rlang::abort(
-      'No files were found matching the regexp/class_id combination given.'
-    )
+    if (length(files) == 0) rlang::abort(paste0(
+      'No files were found matching the regexp/class_id combination given.\n',
+      '  combined regular expression: ', regexp
+    ))
 
     # read in and combine files
     dfs <- purrr::map(files, utils::read.csv, stringsAsFactors = FALSE)

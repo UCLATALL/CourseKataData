@@ -20,10 +20,21 @@ ensure_columns <- function(data, required_columns, signal, message_prefix = "") 
   invisible(!any(missing_required_cols))
 }
 
+
 # Simple parsers
-strip_alpha <- function(x) stringr::str_remove_all(x, '[^0-9.-]')
-parse_double <- function(x) vctrs::vec_cast(strip_alpha(x), double())
-parse_integer <- function(x) vctrs::vec_cast(parse_double(x), integer())
+
+strip_alpha <- function(x) {
+  stringr::str_remove_all(x, '[^0-9.-]')
+}
+
+parse_double <- function(x) {
+  as.double(strip_alpha(x))
+}
+
+parse_integer <- function(x) {
+  as.integer(parse_double(x))
+}
+
 parse_datetime <- function(x, tzone = 'UTC') {
   dt <- as.POSIXct(x, format = "%Y-%m-%d %H:%M:%OS", tz = 'UTC')
   structure(dt, tzone = tzone)

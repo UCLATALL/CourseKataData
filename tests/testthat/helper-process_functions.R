@@ -41,18 +41,3 @@ expect_nrow <- function(object, n) {
 
   invisible(act$val)
 }
-
-#' Expectation: does the object have variables with vctr properties?
-#'
-#' @param object data.frame to work within.
-#' @param vctrs character vector of the variables to test.
-#' @param ptype (Optional) Vector prototype to test against. Should be a size-0
-#'   (empty) generalised vector.
-#' @param size (Optional) Size to check for.
-#'
-#' @family expectations
-#' @export
-expect_vectors_in_df <- function(object, vctrs, ptype = NULL, size = NULL) {
-  for (i in vctrs) testthat::expect_vector(object[[!!i]], ptype, size)
-  invisible(object)
-}

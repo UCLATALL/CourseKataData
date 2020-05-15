@@ -46,11 +46,9 @@ test_that("integer columns are appropriately typed if they exist", {
     lrn_question_position = "1"
   )
 
-  expect_vectors_in_df(
-    convert_types_in_responses(mock_response),
-    names(mock_response),
-    integer()
-  )
+  actual <- convert_types_in_responses(mock_response)
+  expect_vector(actual$attempt, integer())
+  expect_vector(actual$lrn_question_position, integer())
 })
 
 test_that("numeric columns are appropriately typed if they exist", {
@@ -60,11 +58,9 @@ test_that("numeric columns are appropriately typed if they exist", {
     points_earned = "1"
   )
 
-  expect_vectors_in_df(
-    convert_types_in_responses(mock_response),
-    names(mock_response),
-    numeric()
-  )
+  actual <- convert_types_in_responses(mock_response)
+  expect_vector(actual$points_possible, numeric())
+  expect_vector(actual$points_earned, numeric())
 })
 
 test_that("datetime columns are appropriately typed if they exist", {
@@ -75,11 +71,10 @@ test_that("datetime columns are appropriately typed if they exist", {
     lrn_dt_saved = as.character(Sys.Date())
   )
 
-  expect_vectors_in_df(
-    convert_types_in_responses(mock_response),
-    names(mock_response),
-    new_datetime(tzone = "UTC")
-  )
+  actual <- convert_types_in_responses(mock_response)
+  expect_vector(actual$dt_submitted, new_datetime(tzone = "UTC"))
+  expect_vector(actual$lrn_dt_started, new_datetime(tzone = "UTC"))
+  expect_vector(actual$lrn_dt_saved, new_datetime(tzone = "UTC"))
 })
 
 test_that("datetime columns can be read-in as a specific time zone", {
@@ -87,11 +82,8 @@ test_that("datetime columns can be read-in as a specific time zone", {
     dt_submitted = as.character(Sys.Date())
   )
 
-  expect_vectors_in_df(
-    convert_types_in_responses(mock_response, time_zone = Sys.timezone()),
-    names(mock_response),
-    new_datetime(tzone = Sys.timezone())
-  )
+  actual <- convert_types_in_responses(mock_response, time_zone = Sys.timezone())
+  expect_vector(actual$dt_submitted, new_datetime(tzone = Sys.timezone()))
 })
 
 test_that("list columns are appropriately typed if they exist", {
@@ -100,11 +92,8 @@ test_that("list columns are appropriately typed if they exist", {
     lrn_response_json = c("{}", "", ";")
   )
 
-  expect_vectors_in_df(
-    convert_types_in_responses(mock_response),
-    names(mock_response),
-    list()
-  )
+  actual <- convert_types_in_responses(mock_response)
+  expect_vector(actual$lrn_response_json, list())
 })
 
 test_that("all non-explicitly-typed columns are converted to character", {
@@ -112,11 +101,8 @@ test_that("all non-explicitly-typed columns are converted to character", {
     some_variable = factor(1)
   )
 
-  expect_vectors_in_df(
-    convert_types_in_responses(mock_response),
-    names(mock_response),
-    character()
-  )
+  actual <- convert_types_in_responses(mock_response)
+  expect_vector(actual$some_variable, character())
 })
 
 

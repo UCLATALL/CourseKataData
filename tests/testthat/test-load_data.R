@@ -1,67 +1,163 @@
 
-test_df <- data.frame(x = factor('a'))
-test_dfs <- function(n = length(test_files)) {
-  vctrs::vec_recycle(test_df, n)
+df <- function() {
+  data.frame(x = factor('a'))
 }
 
-test_dir <- fs::path_temp('coursekatadata')
-test_class_dirs <- fs::dir_create(fs::path(test_dir, 1:2), recurse = TRUE)
-test_files <- fs::file_temp(
-  tmp_dir = c(test_class_dirs[[1]], test_class_dirs),
-  ext = 'csv'
-)
-purrr::walk2(test_df, test_files, write.csv, row.names = FALSE)
+make_test_dir <- function(dir_in_temp, envir = parent.frame()) {
+  make_dir <- function(dir_in_temp, envir) {
+    withr::defer(
+      try(unlink(temp_path, recursive = TRUE, force = TRUE), silent = TRUE),
+      envir = envir
+    )
 
-test_zip <- fs::file_temp(ext = 'zip')
-zip::zipr(test_zip, test_dir)
+    temp_path <- fs::path(tempdir(check = TRUE), as.character(dir_in_temp))
+    fs::dir_create(temp_path)
+    temp_path
+  }
+
+  tryCatch(
+    make_dir(dir_in_temp, envir),
+    error = function(e) {
+      errors <- paste0('\n* ', e$message, collapse = '')
+      skip(paste0("cannot create test directory", errors))
+    }
+  )
+}
+
+make_test_file <- function(ext, make_in = NULL, envir = parent.frame()) {
+  make_file <- function(file, envir) {
+    withr::defer(
+      try(unlink(file, recursive = TRUE, force = TRUE), silent = TRUE),
+      envir = envir
+    )
+    fs::file_create(file)
+  }
+
+  # determine where the file should be created
+  test_file <-
+    if (is.null(make_in)) {
+      fs::file_temp(ext = ext)
+    } else if (fs::is_dir(as.character(make_in))) {
+      fs::file_temp(ext = ext, tmp_dir = make_in)
+    } else {
+      # not null, but doesn't exist
+      res <- fs::file_temp(ext = ext, tmp_dir = make_test_dir(make_in, envir))
+    }
+
+  tryCatch(
+    make_file(test_file, envir),
+    error = function(e) {
+      try(unlink(test_file, recursive = TRUE), silent = TRUE)
+      errors <- paste0('\n* ', e$message, collapse = '')
+      skip(paste0("cannot create test file", errors))
+    }
+  )
+}
+
+make_test_csv <- function(data, make_in = NULL, envir = parent.frame()) {
+  test_file <- make_test_file('csv', make_in, envir)
+  write.csv(data, test_file, row.names = FALSE)
+  test_file
+}
+
+make_test_csvs <- function(data, n, make_in = tempdir(check = TRUE), envir = parent.frame()) {
+  purrr::map2_chr(seq_len(n), make_in, function(.x, make_in) {
+    make_test_csv(data, make_in = make_in, envir = envir)
+  })
+}
+
+make_test_zip <- function(dir_in_temp, files_data, files_n, files_make_in,
+                          envir = parent.frame()) {
+  make_zip <- function(dir, files_data, files_n, files_make_in, envir) {
+    make_in <- fs::dir_create(fs::path(test_dir, as.character(files_make_in)))
+    test_files <- make_test_csvs(files_data, files_n, make_in, envir)
+
+    test_zip <- make_test_file('zip', envir = envir)
+    zip::zipr(test_zip, test_dir, recurse = TRUE, include_directories = TRUE)
+    test_zip
+  }
+
+  test_dir <- make_test_dir(dir_in_temp, envir)
+  tryCatch(
+    make_zip(test_dir, files_data, files_n, files_make_in, envir),
+    error = function(e) {
+      try(unlink(test_dir, recursive = TRUE), silent = TRUE)
+      errors <- paste0('\n* ', e$message, collapse = '')
+      skip(paste0("cannot create test zip", errors))
+    }
+  )
+}
+
 
 # from a data frame
 test_that('loading a data frame converts it to a normalized tibble', {
+  test_df <- df()
   object <- load_data(test_df)
   expect_true(tibble::is_tibble(object))
   expect_vector(object$x, character(), 1)
 })
 
+
 # from a file path
 test_that('data can be loaded from a single file', {
-  object <- load_data(test_files[[1]])
-  expected <- load_data(test_df)
-  expect_identical(object, expected)
+  test_df <- df()
+  test_file <- make_test_csv(test_df)
+
+  expect_identical(load_data(test_file), load_data(test_df))
 })
 
 test_that('data can be loaded from a file vector', {
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 2)
+
   object <- load_data(test_files)
-  expected <- load_data(test_dfs())
+  expected <- load_data(vctrs::vec_rep(test_df, 2))
   expect_identical(object, expected)
 })
 
+
 # filtering arguments
 test_that('an error is thrown if no files match filter arguments', {
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 2)
+
   message <- 'No files were found matching the regexp/class_id combination given.'
   expect_error(load_data(test_files, regexp = 'does not exist'), message)
   expect_error(load_data(test_files, class_id = 'does not exist'), message)
 })
 
 test_that('a file vector can be filtered by regexp when loading', {
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 2)
+
   regexp <- sprintf('.*%s$', fs::path_file(test_files[[1]]))
   object <- load_data(test_files, regexp = regexp)
   expected <- load_data(test_df)
   expect_identical(object, expected)
 })
 
-# test_that('a file vector can be filtered by class_id when loading', {
-#   object <- load_data(test_files, class_id = 1)
-#   expected <- load_data(test_dfs(2))
-#   expect_identical(object, expected)
-# })
+test_that('a file vector can be filtered by class_id when loading', {
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 3, make_in = c(1, 1, 2))
+
+  object <- load_data(test_files, class_id = 1)
+  expected <- load_data(vctrs::vec_rep(test_df, 2))
+  expect_identical(object, expected)
+})
 
 test_that('a file vector can be filtered by multiple class_ids when loading', {
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 3, make_in = c(1, 1, 2))
+
   object <- load_data(test_files, class_id = 1:2)
-  expected <- load_data(test_dfs(3))
+  expected <- load_data(vctrs::vec_rep(test_df, 3))
   expect_identical(object, expected)
 })
 
 test_that('a file vector can be filtered by class_id and regexp when loading', {
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 3, make_in = c(1, 1, 2))
+
   regexp <- sprintf('.*%s$', fs::path_file(test_files[[1]]))
   object <- load_data(test_files, regexp = regexp, class_id = 1)
   expected <- load_data(test_df)
@@ -71,48 +167,76 @@ test_that('a file vector can be filtered by class_id and regexp when loading', {
 
 # from a directory path
 test_that('directories are loaded like file vectors', {
+  test_df <- df()
+  test_file <- make_test_csv(test_df, make_in = 1)
+  test_dir <- fs::path_dir(test_file)
+
   object <- load_data(test_dir)
-  expected <- load_data(test_dfs())
+  expected <- load_data(test_df)
   expect_identical(object, expected)
 })
 
 test_that('directories are filtered like file vectors', {
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 3, make_in = c(1, 1, 2))
+  test_dir <- fs::path_dir(fs::path_dir(test_files[[1]]))
+
   regexp <- sprintf('.*%s$', fs::path_file(test_files[[1]]))
-  expected <- load_data(test_dfs(1))
+  expected <- load_data(test_df)
   expect_identical(load_data(test_dir, regexp = regexp), expected)
   expect_identical(load_data(test_dir, class_id = 2), expected)
 })
 
 test_that('directory vectors are loaded like file vectors', {
-  object <- load_data(test_class_dirs)
-  expected <- load_data(test_dfs())
+  test_df <- df()
+  test_files <- make_test_csvs(test_df, 3, make_in = c(1, 1, 2))
+  test_dirs <- unique(fs::path_dir(test_files))
+
+  object <- load_data(test_dirs)
+  expected <- load_data(vctrs::vec_rep(test_df, 3))
   expect_identical(object, expected)
 })
 
 # from a zip file
 test_that('zips are extracted and loaded like file vectors', {
+  test_df <- df()
+  test_zip <- make_test_zip('ckd_test_zip', test_df, 3, c(1, 1, 2))
+
   object <- load_data(test_zip)
-  expected <- load_data(test_dfs())
+  expected <- load_data(vctrs::vec_rep(test_df, 3))
   expect_identical(object, expected)
 })
 
-# test_that('zips are filtered like file vectors', {
-#   regexp <- sprintf('.*%s$', fs::path_file(test_files[[1]]))
-#   expected <- load_data(test_dfs(1))
-#   expect_identical(load_data(test_zip, regexp = regexp), expected)
-#   expect_identical(load_data(test_zip, class_id = 2), expected)
-# })
+test_that('zips are filtered like file vectors', {
+  test_df <- df()
+  test_zip <- make_test_zip('ckd_test_zip', test_df, 3, c(1, 1, 2))
+  zip_files <- zip::zip_list(test_zip)$filename
+  first_csv <- zip_files[grepl('.*[.]csv$', zip_files)][[1]]
+
+  regexp <- sprintf('.*%s$', fs::path_file(first_csv))
+  expected <- load_data(test_df)
+  expect_identical(load_data(test_zip, regexp = regexp), expected)
+  expect_identical(load_data(test_zip, class_id = 2), expected)
+})
 
 test_that('zip vectors are extracted and loaded like file vectors', {
+  test_df <- df()
+  test_zip <- make_test_zip('ckd_test_zip', test_df, 1, 1)
+
   object <- load_data(c(test_zip, test_zip))
-  expected <- load_data(vctrs::vec_c(test_dfs(), test_dfs()))
+  expected <- load_data(vctrs::vec_rep(test_df, 2))
   expect_identical(object, expected)
 })
 
 
 # from a mixed list of object types
 test_that('it can load a mixed list of directories, files, and zips', {
-  object <- load_data(c(test_files, test_dir, test_zip))
-  expected <- load_data(vctrs::vec_c(test_dfs(), test_dfs(), test_dfs()))
+  test_df <- df()
+  test_file <- make_test_csv(test_df, 1)
+  test_dir <- fs::path_dir(test_file)
+  test_zip <- make_test_zip('ckd_test_zip', test_df, 1, 1)
+
+  object <- load_data(c(test_file, test_dir, test_zip))
+  expected <- load_data(vctrs::vec_rep(test_df, 3))
   expect_identical(object, expected)
 })
