@@ -20,7 +20,7 @@ test_that('the converter can swapped out for something custom', {
 
 test_that('list columns are converted to JSON for CSV output', {
   on.exit(try(unlink(test_file, recursive = TRUE, force = TRUE), silent = TRUE))
-  test_file <- fs::file_temp()
+  test_file <- fs::file_temp(pattern = 'ckd-write-csv-', tmp_dir = tempdir(check = TRUE))
 
   df <- tibble::tibble(x = list(list(a = 'named'), list(1:3)))
   write.csv(df, test_file)

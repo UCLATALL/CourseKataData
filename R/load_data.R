@@ -57,7 +57,8 @@ load_data <- function(object, regexp = '.*', class_id = NULL) {
       safe_directories <- fs::path_dir(safe_targets)
 
       # extract to a temporary directory
-      temp_dir <- fs::path_ext_remove(fs::path_file(zip_file)) %>% fs::path_temp()
+      temp_dir_name <- fs::path_ext_remove(fs::path_file(zip_file))
+      temp_dir <- fs::dir_create(fs::path(tempdir(check = TRUE), temp_dir_name))
       purrr::walk2(targets, safe_directories, function(file_name, directory) {
         ex_dir <- fs::path(temp_dir, directory)
         utils::unzip(zip_file, file_name, junkpaths = TRUE, exdir = ex_dir)

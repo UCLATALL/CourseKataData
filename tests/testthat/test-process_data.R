@@ -1,7 +1,7 @@
 library(fs)
 library(zip)
 
-ex_dir <- path_temp("some_path")
+ex_dir <- fs::path(tempdir(check = TRUE), "coursekdatadata_process_data")
 zip_file <- data_file("zipped.zip")
 unzip(data_file("zipped.zip"), exdir = ex_dir)
 
