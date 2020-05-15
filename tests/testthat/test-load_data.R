@@ -4,20 +4,22 @@ df <- function() {
 }
 
 make_test_dir <- function(dir_in_temp, envir = parent.frame()) {
-  make_dir <- function(dir_in_temp, envir) {
+  tempdir(check = TRUE)
+  make_dir <- function(temp_dir, envir) {
     withr::defer(
-      try(unlink(temp_path, recursive = TRUE, force = TRUE), silent = TRUE),
+      try(unlink(temp_dir, recursive = TRUE, force = TRUE), silent = TRUE),
       envir = envir
     )
 
-    temp_path <- fs::path(tempdir(check = TRUE), as.character(dir_in_temp))
-    fs::dir_create(temp_path)
-    temp_path
+    fs::dir_create(temp_dir)
+    temp_dir
   }
 
+  temp_dir <- fs::path(tempdir(check = TRUE), as.character(dir_in_temp))
   tryCatch(
-    make_dir(dir_in_temp, envir),
+    make_dir(temp_dir, envir),
     error = function(e) {
+      try(unlink(temp_dir, recursive = TRUE, force = TRUE), silent = TRUE)
       errors <- paste0('\n* ', e$message, collapse = '')
       skip(paste0("cannot create test directory", errors))
     }
@@ -25,25 +27,28 @@ make_test_dir <- function(dir_in_temp, envir = parent.frame()) {
 }
 
 make_test_file <- function(ext, make_in = NULL, envir = parent.frame()) {
-  make_file <- function(file, envir) {
+  tempdir(check = TRUE)
+  make_file <- function(temp_file, envir) {
     withr::defer(
-      try(unlink(file, recursive = TRUE, force = TRUE), silent = TRUE),
+      try(unlink(temp_file, recursive = TRUE, force = TRUE), silent = TRUE),
       envir = envir
     )
-    fs::file_create(file)
+    fs::file_create(temp_file)
+    temp_file
   }
 
   # determine where the file should be created
-  test_file <-
+  make_in <-
     if (is.null(make_in)) {
-      fs::file_temp(tmp_dir = tempdir(check = TRUE), ext = ext)
+      tempdir(check = TRUE)
     } else if (fs::is_dir(as.character(make_in))) {
-      fs::file_temp(tmp_dir = make_in, ext = ext)
+      make_in
     } else {
       # not null, but doesn't exist
-      res <- fs::file_temp(tmp_dir = make_test_dir(make_in, envir), ext = ext)
+      make_test_dir(make_in, envir)
     }
 
+  test_file <- fs::file_temp(tmp_dir = make_in, ext = ext)
   tryCatch(
     make_file(test_file, envir),
     error = function(e) {
@@ -55,12 +60,14 @@ make_test_file <- function(ext, make_in = NULL, envir = parent.frame()) {
 }
 
 make_test_csv <- function(data, make_in = NULL, envir = parent.frame()) {
+  tempdir(check = TRUE)
   test_file <- make_test_file('csv', make_in, envir)
-  write.csv(data, test_file, row.names = FALSE)
+  utils::write.csv(data, test_file, row.names = FALSE)
   test_file
 }
 
 make_test_csvs <- function(data, n, make_in = tempdir(check = TRUE), envir = parent.frame()) {
+  tempdir(check = TRUE)
   purrr::map2_chr(seq_len(n), make_in, function(.x, make_in) {
     make_test_csv(data, make_in = make_in, envir = envir)
   })
@@ -68,6 +75,7 @@ make_test_csvs <- function(data, n, make_in = tempdir(check = TRUE), envir = par
 
 make_test_zip <- function(dir_in_temp, files_data, files_n, files_make_in,
                           envir = parent.frame()) {
+  tempdir(check = TRUE)
   make_zip <- function(dir, files_data, files_n, files_make_in, envir) {
     make_in <- fs::dir_create(fs::path(test_dir, as.character(files_make_in)))
     test_files <- make_test_csvs(files_data, files_n, make_in, envir)

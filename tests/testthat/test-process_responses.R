@@ -30,8 +30,8 @@ class_dir <- dir_create(path(top_dir, "classes", c("class_1", "class_2")))
 
 resp_file_1 <- path(class_dir[[1]], "responses", ext = "csv")
 resp_file_2 <- path(class_dir[[2]], "responses", ext = "csv")
-write.csv(mock_responses_integration, resp_file_1, row.names = FALSE)
-write.csv(mock_responses_integration, resp_file_2, row.names = FALSE)
+utils::write.csv(mock_responses_integration, resp_file_1, row.names = FALSE)
+utils::write.csv(mock_responses_integration, resp_file_2, row.names = FALSE)
 
 zip_file <- file_temp(ext = ".zip")
 zipr(zip_file, top_dir)
