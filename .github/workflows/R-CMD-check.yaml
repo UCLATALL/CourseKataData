@@ -2,11 +2,9 @@ on:
   push:
     branches:
       - master
-      - check-other-systems
   pull_request:
     branches:
       - master
-      - check-other-systems
 
 name: R-CMD-check
 
