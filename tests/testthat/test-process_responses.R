@@ -25,7 +25,7 @@ mock_responses_integration <- data.frame(
 
 mock_integration_processed <- process_responses(mock_responses_integration)
 
-top_dir <- path_temp("data_download")
+top_dir <- path(tempdir(check = TRUE), "data_download")
 class_dir <- dir_create(path(top_dir, "classes", c("class_1", "class_2")))
 
 resp_file_1 <- path(class_dir[[1]], "responses", ext = "csv")

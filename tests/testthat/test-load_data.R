@@ -36,12 +36,12 @@ make_test_file <- function(ext, make_in = NULL, envir = parent.frame()) {
   # determine where the file should be created
   test_file <-
     if (is.null(make_in)) {
-      fs::file_temp(ext = ext)
+      fs::file_temp(tmp_dir = tempdir(check = TRUE), ext = ext)
     } else if (fs::is_dir(as.character(make_in))) {
-      fs::file_temp(ext = ext, tmp_dir = make_in)
+      fs::file_temp(tmp_dir = make_in, ext = ext)
     } else {
       # not null, but doesn't exist
-      res <- fs::file_temp(ext = ext, tmp_dir = make_test_dir(make_in, envir))
+      res <- fs::file_temp(tmp_dir = make_test_dir(make_in, envir), ext = ext)
     }
 
   tryCatch(
