@@ -33,7 +33,7 @@ resp_file_2 <- path(class_dir[[2]], "responses", ext = "csv")
 utils::write.csv(mock_responses_integration, resp_file_1, row.names = FALSE)
 utils::write.csv(mock_responses_integration, resp_file_2, row.names = FALSE)
 
-zip_file <- file_temp(ext = ".zip")
+zip_file <- file_temp(pattern = 'ckd-responses-', ext = ".zip")
 zipr(zip_file, top_dir)
 
 
