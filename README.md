@@ -230,11 +230,11 @@ run in any order. If you alter the response data and and a function
 doesn’t know how to handle it any more, it will tell you what is missing
 or needed.
 
-# Funding Acknowledgment
+## Funding Acknowledgment
 
 [CourseKata.org](https://coursekata.org) is a project of the UCLA Psychology Department’s [Teaching and Learning Lab](https://uclatall.com). It is supported in part by a grant from the Chan Zuckerberg Initiative DAF, an advised fund of Silicon Valley Community Foundation.
 
-# Contributing
+## Contributing
 
 If you see an issue, problem, or improvement that you think we should
 know about, or you think would fit with this package, please let us know
