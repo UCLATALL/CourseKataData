@@ -1,0 +1,29 @@
+#' Codebooks different versions of Introductory Statistics: A Modeling Approach
+#'
+#' There are multiple versions of Introductory Statistics: A Modeling Approach.
+#' In each version there are some survey items that appear across different
+#' versions of the book. These items are sometimes edited for typos, grouped
+#' differently, or placed on different pages, though they largely remain
+#' unchanged. When the items are edited on Learnosity, the item pool management
+#' system used throughout the course, they are given a new reference ID, though
+#' the question still asks the same question. To track the question across
+#' different versions of the book, these codebooks provide consistent variable
+#' names that do not change across versions. When you run any of the
+#' `process_*()` functions, like \code{\link{process_responses}}, these variable
+#' names will automatically be added to the datasets in the `var_name` column.
+#'
+#' @name codebooks
+#'
+#' @format A data frame with 85 rows and 12 variables:
+#' \describe{
+#'   \item{lrn_question_reference}{the unique ID for the question on Learnosity,
+#'     and in the book; may or may not match the same question across versions}
+#'   \item{var_name}{the unchanging name for the same question across different
+#'     versions of the book}
+#'   \item{prompt}{the prompt for the survey item}
+#'   \item{lrn_option_<0-8>}{where applicable, the available multiple-choice
+#'     options for the question}
+#' }
+
+#' @rdname codebooks
+'codebook_1.6'
