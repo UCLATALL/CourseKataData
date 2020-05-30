@@ -1,4 +1,4 @@
-#' Codebooks different versions of Introductory Statistics: A Modeling Approach
+#' Codebooks for surveys from Introductory Statistics: A Modeling Approach.
 #'
 #' There are multiple versions of Introductory Statistics: A Modeling Approach.
 #' In each version there are some survey items that appear across different
@@ -9,21 +9,26 @@
 #' the question still asks the same question. To track the question across
 #' different versions of the book, these codebooks provide consistent variable
 #' names that do not change across versions. When you run any of the
-#' `process_*()` functions, like \code{\link{process_responses}}, these variable
-#' names will automatically be added to the datasets in the `var_name` column.
+#' `process_*()` functions, the `map_responses()` function is called to add
+#' these variable names to the data being processed.
+#'
+#' @format Each codebook has the same structure, the reference ID for each
+#'   question in the codebook, the consistent variable name for that question,
+#'   and the prompt and response options (if any). These variables are as
+#'   follows:
+#'   \describe{
+#'     \item{lrn_question_reference}{the unique ID for the question on
+#'       Learnosity, and in the book; may or may not match the same question
+#'       across versions}
+#'     \item{var_name}{the unchanging name for the same question across
+#'       different versions of the book}
+#'     \item{prompt}{the prompt for the survey item}
+#'     \item{lrn_option_<0-n>}{where applicable, the available response options
+#'       for the question}
+#'   }
 #'
 #' @name codebooks
-#'
-#' @format A data frame with 85 rows and 12 variables:
-#' \describe{
-#'   \item{lrn_question_reference}{the unique ID for the question on Learnosity,
-#'     and in the book; may or may not match the same question across versions}
-#'   \item{var_name}{the unchanging name for the same question across different
-#'     versions of the book}
-#'   \item{prompt}{the prompt for the survey item}
-#'   \item{lrn_option_<0-8>}{where applicable, the available multiple-choice
-#'     options for the question}
-#' }
+#' @seealso \code{\link{process_responses}}, \code{\link{process_auxillary}}
 
 #' @rdname codebooks
 'codebook_1.6'
