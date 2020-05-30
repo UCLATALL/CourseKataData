@@ -85,7 +85,7 @@ load_data <- function(object, regexp = '.*', class_id = NULL) {
 
     # read in and combine files
     dfs <- purrr::map(files, utils::read.csv, stringsAsFactors = FALSE)
-    object <- purrr::reduce(dfs, vctrs::vec_c)
+    object <- do.call(vctrs::vec_c, dfs)
   }
 
   purrr::modify_if(tibble::as_tibble(object), is.factor, as.character)

@@ -38,7 +38,7 @@ test_that("all responses are accounted for", {
   rownames <- as.integer(rownames(mock_responses))
   mock_responses[['rownames']] <- rownames
   split <- split_responses(mock_responses)
-  spliced <- purrr::reduce(split, rbind) %>%
+  spliced <- do.call(vctrs::vec_c, split) %>%
     .[match(rownames, .[['rownames']]), ]
 
   expect_identical(spliced, mock_responses)
