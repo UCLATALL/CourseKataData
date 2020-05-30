@@ -55,6 +55,6 @@ names that do not change across versions. When you run any of the
 these variable names to the data being processed.
 }
 \seealso{
-process_responses process_auxillary
+\code{\link{process_responses}}, \code{\link{process_auxillary}}
 }
 \keyword{datasets}
