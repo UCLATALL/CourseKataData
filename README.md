@@ -39,8 +39,9 @@ install_github("UCLATALL/CourseKataData")
 
 This section details the usage of the functions in the CourseKataData
 package. If you would like to read more about the actual structure of
-the data downloaded from CourseKata, scroll down to the **Data
-Structure** section.
+the data downloaded from CourseKata, check out the associated [Data
+Structure page in the
+Wiki](https://github.com/UCLATALL/CourseKataData/wiki/Data-Structure).
 
 ### One and Done
 
@@ -147,12 +148,13 @@ process_classes("path/to/downloaded/data)
 ```
 
 The classes data file contains information about each class in the data
-download (see more about the structure of the data download and what is
-in each file in the **Data Structure** section below). However, the
-other files are specific to each class included in the download. If you
-want to extract a specific class, you can specify the `class_id`, which
-should correspond to the name of the class’s folder in the `classes`
-folder of the download.
+download. However, the other files are specific to each class included
+in the download. If you want to extract a specific class, you can
+specify the `class_id`, which should correspond to the name of the
+class’s folder in the `classes` folder of the download. (See more
+about the structure of the data download and what is in each file in the
+[Data Structure page in the
+Wiki](https://github.com/UCLATALL/CourseKataData/wiki/Data-Structure).)
 
 ``` r
 # a single class
@@ -219,16 +221,16 @@ along the way), each of the finer processing functions are available.
 The following is equivalent to `process_responses()`:
 
 ``` r
-read.csv("path/to/downloaded/data/classes/[class_id].csv") %>% 
+read.csv("path/to/downloaded/data/classes/[class_id]/responses.csv") %>% 
   convert_types_in_responses() %>%
   ensure_data_in_responses() %>%
   map_response_options()
 ```
 
 The part functions are purely functional, which means that they can be
-run in any order. If you alter the response data and and a function
-doesn’t know how to handle it any more, it will tell you what is missing
-or needed.
+run in any order. If you alter the response data and a function doesn’t
+know how to handle it any more, it will tell you what is missing or
+needed.
 
 ## Funding Acknowledgment
 
