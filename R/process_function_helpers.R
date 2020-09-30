@@ -28,7 +28,7 @@ strip_alpha <- function(x) {
 }
 
 parse_double <- function(x) {
-  as.double(strip_alpha(x))
+  if (is.character(x)) as.double(strip_alpha(x)) else as.double(x)
 }
 
 parse_integer <- function(x) {
