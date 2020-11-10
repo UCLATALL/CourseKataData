@@ -1,6 +1,6 @@
 mock_responses <- tibble::tibble(
   item_id = c(
-    "Presurvey_101_other_text", "Postsurvey_101_other_text",
+    "Presurvey_0719_Student_Background", "Postsurvey_0719_Attitudes", "Embedded_0719_Value",
     "Ch1_Practice_Quiz", "Ch6_Practice_Quiz_2",
     "literally", "anything", "else"
   )
@@ -22,16 +22,16 @@ test_that("response tables missing required columns throw informative errors", {
   )
 })
 
-test_that("pre- and post- survey items end up in surveys", {
-  expect_identical(split$survey, mock_responses[1:2, ])
+test_that("survey items end up in surveys", {
+  expect_identical(split$survey, mock_responses[1:3, ])
 })
 
 test_that("practice quiz items end up in quizzes", {
-  expect_identical(split$quizzes, mock_responses[3:4, ])
+  expect_identical(split$quizzes, mock_responses[4:5, ])
 })
 
 test_that("all other items end up in in_text", {
-  expect_identical(split$in_text, mock_responses[5:7, ])
+  expect_identical(split$in_text, mock_responses[6:8, ])
 })
 
 test_that("all responses are accounted for", {

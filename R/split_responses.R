@@ -16,8 +16,19 @@
 #' @export
 split_responses <- function(responses) {
   ensure_columns(responses, "item_id", stop, "Cannot split responses. ")
-  surveys <- stringr::str_detect(responses[["item_id"]], "^(?:Pre|Post)survey_")
-  quizzes <- stringr::str_detect(responses[["item_id"]], ".*_Practice_Quiz.*")
+  surveys <- survey_item_map(responses)
+  quizzes <- quiz_item_map(responses)
   groups <- ifelse(surveys, "surveys", ifelse(quizzes, "quizzes", "in_text"))
   split(tibble::as_tibble(responses), groups)
+}
+
+
+survey_item_map <- function(responses) {
+  item_map_lower <- stringr::str_to_lower(survey_item_references[["item_id"]])
+  stringr::str_to_lower(responses[["item_id"]]) %in% item_map_lower
+}
+
+
+quiz_item_map <- function(responses) {
+  stringr::str_detect(responses[["item_id"]], ".*_Practice_Quiz.*")
 }
