@@ -24,7 +24,7 @@ split_responses <- function(responses) {
 
 
 survey_item_map <- function(responses) {
-  item_map_lower <- stringr::str_to_lower(survey_item_references[["item_id"]])
+  item_map_lower <- stringr::str_to_lower(codebook[["item_id"]])
   stringr::str_to_lower(responses[["item_id"]]) %in% item_map_lower
 }
 
