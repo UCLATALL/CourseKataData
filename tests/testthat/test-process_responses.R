@@ -86,14 +86,17 @@ test_that("datetime columns can be read-in as a specific time zone", {
   expect_vector(actual$dt_submitted, new_datetime(tzone = Sys.timezone()))
 })
 
-test_that("list columns are appropriately typed if they exist", {
+test_that("list columns are appropriately converted from JSON if requested", {
   # this mock should have all expected list columns
   mock_response <- data.frame(
     lrn_response_json = c("{}", "", ";")
   )
 
-  actual <- convert_types_in_responses(mock_response)
+  actual <- convert_types_in_responses(mock_response, convert_json = TRUE)
   expect_vector(actual$lrn_response_json, list())
+
+  actual <- convert_types_in_responses(mock_response, convert_json = FALSE)
+  expect_vector(actual$lrn_response_json, character())
 })
 
 test_that("all non-explicitly-typed columns are converted to character", {

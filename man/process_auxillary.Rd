@@ -9,19 +9,23 @@
 \alias{process_tags}
 \title{Processing functions for all auxillary (non-response) data.}
 \usage{
-process_classes(object, class_id = NULL)
+process_classes(object, class_id = NULL, convert_json = FALSE)
 
 process_page_views(object, time_zone = "UTC", class_id = NULL)
 
-process_media_views(object, time_zone = "UTC", class_id = NULL)
+process_media_views(
+  object,
+  time_zone = "UTC",
+  class_id = NULL,
+  convert_json = FALSE
+)
 
-process_items(object, class_id = NULL)
+process_items(object, class_id = NULL, convert_json = FALSE)
 
 process_tags(object, class_id = NULL)
 }
 \arguments{
-\item{object}{The object to process the data from. This can be one of a
-variety of options:
+\item{object}{The object to process the data from. This can be one of a variety of options:
 \itemize{
 \item the path to a CourseKata data download zip file
 \item the path to an extracted data download directory
@@ -29,30 +33,31 @@ variety of options:
 \item the \code{data.frame} loaded from a CSV file (useful for writing unit tests)
 }}
 
-\item{class_id}{(Optional) A character vector of the IDs of specific classes
-you want to extract data for. These values should correspond to the names
-of the directories where the desired CSV files can be found in the original
-data download.}
+\item{class_id}{(Optional) A character vector of the IDs of specific classes you want to extract
+data for. These values should correspond to the names of the directories where the desired CSV
+files can be found in the original data download.}
 
-\item{time_zone}{The time zone to use when parsing date-time objects (see
-\code{\link{timezones}}).}
+\item{convert_json}{For speed of processing, columns containing JSON are just read in as strings.
+If you are going to use these data, it may be useful to convert them to lists by specifying
+this argument as \code{TRUE}.}
+
+\item{time_zone}{The time zone to use when parsing date-time objects (see \code{\link{timezones}}).}
 }
 \value{
-These functions will always return a \code{\link{tibble}} of the data
-you are processing. Each row of the resulting \code{tibble}, describes the type
-of data named by the function, e.g. \code{process_classes()} returns a \code{tibble}
-with rows describing \emph{classes}. For descriptions of each of variables in
-each of the tables, see the README for this package (included in the data
+These functions will always return a \code{\link{tibble}} of the data you are processing. Each row
+of the resulting \code{tibble}, describes the type of data named by the function, e.g.
+\code{process_classes()} returns a \code{tibble} with rows describing \emph{classes}. For descriptions of each
+of variables in each of the tables, see the README for this package (included in the data
 download or online at \url{https://github.com/UCLATALL/CourseKataData}).
 }
 \description{
-These functions are for individually processing the auxillary components of a
-CourseKata data download. These functions assume that you are working files
-downloaded from CourseKata, as these files have a predictable structure.
+These functions are for individually processing the auxillary components of a CourseKata data
+download. These functions assume that you are working files downloaded from CourseKata, as these
+files have a predictable structure.
 }
 \details{
-with a zip archive as downloaded from CourseKata, a directory extracted from
-said zip archive, the path to the specif
+with a zip archive as downloaded from CourseKata, a directory extracted from said zip archive,
+the path to the specif
 }
 \seealso{
 Other processing functions: 

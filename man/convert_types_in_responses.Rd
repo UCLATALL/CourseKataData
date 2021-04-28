@@ -4,26 +4,28 @@
 \alias{convert_types_in_responses}
 \title{Convert the columns in a responses table to the appropriate types.}
 \usage{
-convert_types_in_responses(responses, time_zone = "UTC")
+convert_types_in_responses(responses, time_zone = "UTC", convert_json = FALSE)
 }
 \arguments{
 \item{responses}{A CourseKata responses table (e.g. from responses.csv).}
 
-\item{time_zone}{The time zone to use when parsing date-times. See
-\code{\link{timezones}} for more information about valid time zones.}
+\item{time_zone}{The time zone to use when parsing date-time objects (see \code{\link{timezones}}).}
+
+\item{convert_json}{For speed of processing, columns containing JSON are just read in as strings.
+If you are going to use these data, it may be useful to convert them to lists by specifying
+this argument as \code{TRUE}.}
 }
 \value{
-A \code{\link{tibble}} of the same size as \code{responses} with an
-appropriate type for each variable.
+A \code{\link{tibble}} of the same size as \code{responses} with an appropriate type for each variable.
 }
 \description{
-\code{convert_types_in_responses()} takes a CourseKata responses table and returns
-a responses table with all of the same data except that the variables in the
-table are converted to appropriate types:
+\code{convert_types_in_responses()} takes a CourseKata responses table and returns a responses table
+with all of the same data except that the variables in the table are converted to appropriate
+types:
 \itemize{
 \item \strong{integer}: \code{attempt}, \code{lrn_question_position}
 \item \strong{number}: \code{points_possible}, \code{points_earned}
-\item \strong{datetime}: \code{dt_submitted}, \code{lrn_dtstarted}, \code{lrn_dt_saved}
+\item \strong{datetime}: \code{dt_submitted}, \code{lrn_dt_started}, \code{lrn_dt_saved}
 \item \strong{list}: \code{lrn_response_json}
 \item \strong{character}: all other columns not listed above
 }

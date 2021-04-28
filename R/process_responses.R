@@ -1,19 +1,17 @@
 #' Process responses from a CourseKata class data download
 #'
-#' The `process_responses()` function processes the responses found in the given
-#' object. The responses are checked for required columns in
-#' `ensure_data_in_responses()`, the variables in the outcome table are
-#' converted to appropriate types with `convert_types_in_responses()`, and
-#' multiple-response option indices in `response` (`lrn_type = 'mcq'`) are
-#' mapped to their values (`lrn_option_<index>`) with `map_response_options()`.
+#' The `process_responses()` function processes the responses found in the given object. The
+#' responses are checked for required columns in `ensure_data_in_responses()`, the variables in the
+#' outcome table are converted to appropriate types with `convert_types_in_responses()`, and
+#' multiple-response option indices in `response` (`lrn_type = 'mcq'`) are mapped to their values
+#' (`lrn_option_<index>`) with `map_response_options()`.
 #'
 #' @inheritParams process_auxillary
 #'
-#' @return A \code{\link{tibble}} of all responses found in the given path or
-#'   data frame. If there are multiple `responses.csv` files, they are merged
-#'   together and can be distinguished by the `class_id` column. If `object` is
-#'   a directory and `class_id` is specified, only the responses for the
-#'   specified class or classes are included.
+#' @return A [`tibble`] of all responses found in the given path or data frame. If there are
+#'   multiple `responses.csv` files, they are merged together and can be distinguished by the
+#'   `class_id` column. If `object` is a directory and `class_id` is specified, only the responses
+#'   for the specified class or classes are included.
 #'
 #' @family processing functions
 #' @export
@@ -72,25 +70,23 @@ ensure_data_in_responses <- function(responses) {
 
 #' Convert the columns in a responses table to the appropriate types.
 #'
-#' `convert_types_in_responses()` takes a CourseKata responses table and returns
-#'  a responses table with all of the same data except that the variables in the
-#'  table are converted to appropriate types:
+#' `convert_types_in_responses()` takes a CourseKata responses table and returns a responses table
+#'  with all of the same data except that the variables in the table are converted to appropriate
+#'  types:
 #'   - **integer**: `attempt`, `lrn_question_position`
 #'   - **number**: `points_possible`, `points_earned`
-#'   - **datetime**: `dt_submitted`, `lrn_dtstarted`, `lrn_dt_saved`
+#'   - **datetime**: `dt_submitted`, `lrn_dt_started`, `lrn_dt_saved`
 #'   - **list**: `lrn_response_json`
 #'   - **character**: all other columns not listed above
 #'
+#' @inheritParams process_auxillary
 #' @inheritParams ensure_data_in_responses
-#' @param time_zone The time zone to use when parsing date-times. See
-#'   \code{\link{timezones}} for more information about valid time zones.
 #'
-#' @return A \code{\link{tibble}} of the same size as `responses` with an
-#'   appropriate type for each variable.
+#' @return A [`tibble`] of the same size as `responses` with an appropriate type for each variable.
 #'
 #' @seealso process_responses
 #' @export
-convert_types_in_responses <- function(responses, time_zone = "UTC") {
+convert_types_in_responses <- function(responses, time_zone = "UTC", convert_json = FALSE) {
   integers <- c("attempt", "lrn_question_position")
   doubles <- c("points_possible", "points_earned")
   datetimes <- c("dt_submitted", "lrn_dt_started", "lrn_dt_saved")
@@ -100,8 +96,11 @@ convert_types_in_responses <- function(responses, time_zone = "UTC") {
     purrr::modify(as.character) %>% # prevent probs from stringsAsFactors
     purrr::modify_at(integers, parse_integer) %>%
     purrr::modify_at(doubles, parse_double) %>%
-    purrr::modify_at(datetimes, parse_datetime, tzone = time_zone) %>%
-    purrr::modify_at("lrn_response_json", safe_convert_json)
+    purrr::modify_at(datetimes, parse_datetime, tzone = time_zone)
+
+  if (convert_json) {
+    converted <- converted %>% purrr::modify_at("lrn_response_json", safe_convert_json)
+  }
 
   attributes(converted) <- attributes(responses)
   tibble::as_tibble(converted)

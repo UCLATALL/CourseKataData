@@ -7,8 +7,7 @@
 process_responses(object, time_zone = "UTC", class_id = NULL)
 }
 \arguments{
-\item{object}{The object to process the data from. This can be one of a
-variety of options:
+\item{object}{The object to process the data from. This can be one of a variety of options:
 \itemize{
 \item the path to a CourseKata data download zip file
 \item the path to an extracted data download directory
@@ -16,28 +15,24 @@ variety of options:
 \item the \code{data.frame} loaded from a CSV file (useful for writing unit tests)
 }}
 
-\item{time_zone}{The time zone to use when parsing date-time objects (see
-\code{\link{timezones}}).}
+\item{time_zone}{The time zone to use when parsing date-time objects (see \code{\link{timezones}}).}
 
-\item{class_id}{(Optional) A character vector of the IDs of specific classes
-you want to extract data for. These values should correspond to the names
-of the directories where the desired CSV files can be found in the original
-data download.}
+\item{class_id}{(Optional) A character vector of the IDs of specific classes you want to extract
+data for. These values should correspond to the names of the directories where the desired CSV
+files can be found in the original data download.}
 }
 \value{
-A \code{\link{tibble}} of all responses found in the given path or
-data frame. If there are multiple \code{responses.csv} files, they are merged
-together and can be distinguished by the \code{class_id} column. If \code{object} is
-a directory and \code{class_id} is specified, only the responses for the
-specified class or classes are included.
+A \code{\link{tibble}} of all responses found in the given path or data frame. If there are
+multiple \code{responses.csv} files, they are merged together and can be distinguished by the
+\code{class_id} column. If \code{object} is a directory and \code{class_id} is specified, only the responses
+for the specified class or classes are included.
 }
 \description{
-The \code{process_responses()} function processes the responses found in the given
-object. The responses are checked for required columns in
-\code{ensure_data_in_responses()}, the variables in the outcome table are
-converted to appropriate types with \code{convert_types_in_responses()}, and
-multiple-response option indices in \code{response} (\code{lrn_type = 'mcq'}) are
-mapped to their values (\verb{lrn_option_<index>}) with \code{map_response_options()}.
+The \code{process_responses()} function processes the responses found in the given object. The
+responses are checked for required columns in \code{ensure_data_in_responses()}, the variables in the
+outcome table are converted to appropriate types with \code{convert_types_in_responses()}, and
+multiple-response option indices in \code{response} (\code{lrn_type = 'mcq'}) are mapped to their values
+(\verb{lrn_option_<index>}) with \code{map_response_options()}.
 }
 \seealso{
 Other processing functions: 

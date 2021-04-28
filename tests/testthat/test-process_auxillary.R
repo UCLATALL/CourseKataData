@@ -8,6 +8,9 @@ test_that('loaded class data is in a tidy table with appropriate types', {
   expect_vector(classes$release, character(), 2)
   expect_vector(classes$teacher_id, character(), 2)
   expect_vector(classes$lms, character(), 2)
+  expect_vector(classes$setup_yaml, character(), 2)
+
+  classes <- process_classes(data_file('classes.csv'), convert_json = TRUE)
   expect_vector(classes$setup_yaml, list(), 2)
 })
 
@@ -33,13 +36,16 @@ test_that("(page_views) time zone can be specified for datetime columns", {
 })
 
 # MEDIA_VIEWS specific
-test_that("(media_views) list columns are appropriately typed if they exist", {
+test_that("(media_views) list columns are appropriately typed if requested", {
   # this mock should have all expected list columns
   mock_response <- data.frame(
     log_json = c("{}", "", ";")
   )
 
   actual <- process_media_views(mock_response)
+  expect_vector(actual$log_json, character())
+
+  actual <- process_media_views(mock_response, convert_json = TRUE)
   expect_vector(actual$log_json, list())
 })
 
@@ -85,13 +91,16 @@ test_that("integer columns are appropriately typed if they exist", {
   expect_vector(actual$lrn_question_position, integer())
 })
 
-test_that("list columns are appropriately typed if they exist", {
+test_that("list columns are appropriately typed if requested", {
   # this mock should have all expected list columns
   mock_response <- data.frame(
     lrn_question_data = c("{}", "", ";")
   )
 
-  actual <- process_items(mock_response)
+  actual <- process_items(mock_response, convert_json = TRUE)
   expect_vector(actual$lrn_question_data, list())
+
+  actual <- process_items(mock_response)
+  expect_vector(actual$lrn_question_data, character())
 })
 
