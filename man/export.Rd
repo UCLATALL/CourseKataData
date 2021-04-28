@@ -75,7 +75,7 @@ tbl_nested <- tibble::tibble(x = list(list(1, 2, 3), list(4, 5, 6)))
 convert_lists(tbl_nested)
 
 # custom converter that just comma-separates top-level values
-to_comma <- function(x) paste0(x, collapse = ',')
+to_comma <- function(x) paste0(x, collapse = ",")
 convert_lists(tbl_nested, to_comma)
 
 # an example of a more deeply nested structure being converted to JSON

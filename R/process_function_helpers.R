@@ -24,7 +24,7 @@ ensure_columns <- function(data, required_columns, signal, message_prefix = "") 
 # Simple parsers
 
 strip_alpha <- function(x) {
-  stringr::str_remove_all(x, '[^0-9.-]')
+  stringr::str_remove_all(x, "[^0-9.-]")
 }
 
 parse_double <- function(x) {
@@ -35,7 +35,7 @@ parse_integer <- function(x) {
   as.integer(parse_double(x))
 }
 
-parse_datetime <- function(x, tzone = 'UTC') {
-  dt <- as.POSIXct(x, format = "%Y-%m-%d %H:%M:%OS", tz = 'UTC')
+parse_datetime <- function(x, tzone = "UTC") {
+  dt <- as.POSIXct(x, format = "%Y-%m-%d %H:%M:%OS", tz = "UTC")
   structure(dt, tzone = tzone)
 }

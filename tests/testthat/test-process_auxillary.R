@@ -1,8 +1,8 @@
 # uses vctrs
 
-test_that('loaded class data is in a tidy table with appropriate types', {
-  classes <- process_classes(data_file('classes.csv'))
-  expect_is(classes, 'data.frame')
+test_that("loaded class data is in a tidy table with appropriate types", {
+  classes <- process_classes(data_file("classes.csv"))
+  expect_s3_class(classes, "tbl_df")
   expect_vector(classes$class_id, character(), 2)
   expect_vector(classes$course_name, character(), 2)
   expect_vector(classes$release, character(), 2)
@@ -10,7 +10,7 @@ test_that('loaded class data is in a tidy table with appropriate types', {
   expect_vector(classes$lms, character(), 2)
   expect_vector(classes$setup_yaml, character(), 2)
 
-  classes <- process_classes(data_file('classes.csv'), convert_json = TRUE)
+  classes <- process_classes(data_file("classes.csv"), convert_json = TRUE)
   expect_vector(classes$setup_yaml, list(), 2)
 })
 
@@ -103,4 +103,3 @@ test_that("list columns are appropriately typed if requested", {
   actual <- process_items(mock_response)
   expect_vector(actual$lrn_question_data, character())
 })
-

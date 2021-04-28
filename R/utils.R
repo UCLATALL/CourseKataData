@@ -5,7 +5,7 @@
 #' @return A logical vector indicating the paths that are zip files.
 #' @keywords internal
 is_zip_file <- function(path) {
-  fs::is_file(path) & fs::path_ext(path) == 'zip'
+  fs::is_file(path) & fs::path_ext(path) == "zip"
 }
 
 
@@ -45,5 +45,5 @@ extract_to_temp <- function(path, regexp = ".*") {
 #' @inheritParams fs::dir_ls
 #' @keywords internal
 dir_to_files <- function(dir_path, regexp) {
-  fs::dir_ls(dir_path, regexp = regexp, type = 'file', recurse = TRUE)
+  fs::dir_ls(dir_path, regexp = regexp, type = "file", recurse = TRUE)
 }

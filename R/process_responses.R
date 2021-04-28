@@ -93,7 +93,8 @@ convert_types_in_responses <- function(responses, time_zone = "UTC", convert_jso
 
   # parsers located in process_function_helpers.R
   converted <- responses %>%
-    purrr::modify(as.character) %>% # prevent probs from stringsAsFactors
+    purrr::modify(as.character) %>%
+    # prevent probs from stringsAsFactors
     purrr::modify_at(integers, parse_integer) %>%
     purrr::modify_at(doubles, parse_double) %>%
     purrr::modify_at(datetimes, parse_datetime, tzone = time_zone)

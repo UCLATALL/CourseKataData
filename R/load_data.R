@@ -18,7 +18,7 @@
 #'   table are merged int a single `tibble`.
 #'
 #' @export
-load_data <- function(object, regexp = '.*', class_id = NULL) {
+load_data <- function(object, regexp = ".*", class_id = NULL) {
   stopifnot(is.data.frame(object) || is.character(object))
 
   if (is.character(object) && !is.null(class_id)) {
@@ -34,10 +34,12 @@ load_data <- function(object, regexp = '.*', class_id = NULL) {
     lists_of_files <- purrr::map_if(files_and_dirs, fs::is_dir, dir_to_files, regexp = regexp)
     files <- stringr::str_subset(purrr::flatten_chr(lists_of_files), regexp)
 
-    if (length(files) == 0) rlang::abort(paste0(
-      'No files were found matching the regexp/class_id combination given.\n',
-      '  combined regular expression: ', regexp
-    ))
+    if (length(files) == 0) {
+      rlang::abort(paste0(
+        "No files were found matching the regexp/class_id combination given.\n",
+        "  combined regular expression: ", regexp
+      ))
+    }
 
     # read in and combine files
     dfs <- purrr::map(files, utils::read.csv, stringsAsFactors = FALSE)

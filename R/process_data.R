@@ -21,13 +21,11 @@
 #' @return This function returns `TRUE` if it completes successfully, and `FALSE` if it is aborted.
 #'
 #' @export
-process_data <- function(
-  path,
-  time_zone = 'UTC',
-  split_responses = FALSE,
-  convert_json = FALSE,
-  env = rlang::global_env()
-) {
+process_data <- function(path,
+                         time_zone = "UTC",
+                         split_responses = FALSE,
+                         convert_json = FALSE,
+                         env = rlang::global_env()) {
   tbls <- c(
     if (split_responses) c("quizzes", "in_text", "surveys") else "responses",
     "classes", "page_views", "media_views", "items", "tags"
@@ -61,11 +59,11 @@ process_data <- function(
   rlang::env_bind(env, tags = process_tags(path))
 
   if (split_responses) {
-    responses = split_responses(env$responses)
-    rlang::env_unbind(env, 'responses')
-    rlang::env_bind(env, surveys = responses[['surveys']])
-    rlang::env_bind(env, quizzes = responses[['quizzes']])
-    rlang::env_bind(env, in_text = responses[['in_text']])
+    responses <- split_responses(env$responses)
+    rlang::env_unbind(env, "responses")
+    rlang::env_bind(env, surveys = responses[["surveys"]])
+    rlang::env_bind(env, quizzes = responses[["quizzes"]])
+    rlang::env_bind(env, in_text = responses[["in_text"]])
   }
 
   var_string <- paste(tbls, collapse = ", ")

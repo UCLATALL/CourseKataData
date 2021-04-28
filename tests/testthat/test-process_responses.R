@@ -1,8 +1,3 @@
-library(fs)
-library(zip)
-library(tibble)
-library(vctrs)
-
 mock_response_looktbl <- data.frame(
   student_id = 1,
   prompt = "text",
@@ -25,16 +20,16 @@ mock_responses_integration <- data.frame(
 
 mock_integration_processed <- process_responses(mock_responses_integration)
 
-top_dir <- path(tempdir(check = TRUE), "data_download")
-class_dir <- dir_create(path(top_dir, "classes", c("class_1", "class_2")))
+top_dir <- fs::path(tempdir(check = TRUE), "data_download")
+class_dir <- fs::path(top_dir, "classes", c("class_1", "class_2")) %>% fs::dir_create()
 
-resp_file_1 <- path(class_dir[[1]], "responses", ext = "csv")
-resp_file_2 <- path(class_dir[[2]], "responses", ext = "csv")
+resp_file_1 <- fs::path(class_dir[[1]], "responses", ext = "csv")
+resp_file_2 <- fs::path(class_dir[[2]], "responses", ext = "csv")
 utils::write.csv(mock_responses_integration, resp_file_1, row.names = FALSE)
 utils::write.csv(mock_responses_integration, resp_file_2, row.names = FALSE)
 
-zip_file <- file_temp(pattern = 'ckd-responses-', ext = ".zip")
-zipr(zip_file, top_dir)
+zip_file <- fs::file_temp(pattern = "ckd-responses-", ext = ".zip")
+zip::zipr(zip_file, top_dir)
 
 
 # Tests: Type conversion --------------------------------------------------
@@ -137,11 +132,9 @@ test_that("responses with a missing class_id are dropped with message", {
     prompt = 1
   )
 
-  expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_message(
-    ensure_data_in_responses(mock_response),
-    "Dropped 1 row missing data at either class_id, student_id, or prompt"
-  )
+  ensure_data_in_responses(mock_response) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
+    expect_nrow(0)
 })
 
 test_that("responses with a missing student_id are dropped with message", {
@@ -151,11 +144,9 @@ test_that("responses with a missing student_id are dropped with message", {
     prompt = 1
   )
 
-  expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_message(
-    ensure_data_in_responses(mock_response),
-    "Dropped 1 row missing data at either class_id, student_id, or prompt"
-  )
+  ensure_data_in_responses(mock_response) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
+    expect_nrow(0)
 })
 
 test_that("responses with a missing prompt are dropped with message", {
@@ -165,11 +156,9 @@ test_that("responses with a missing prompt are dropped with message", {
     prompt = NA
   )
 
-  expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_message(
-    ensure_data_in_responses(mock_response),
-    "Dropped 1 row missing data at either class_id, student_id, or prompt"
-  )
+  ensure_data_in_responses(mock_response) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
+    expect_nrow(0)
 })
 
 test_that("responses with multiple missing values have comprehensive message", {
@@ -179,11 +168,9 @@ test_that("responses with multiple missing values have comprehensive message", {
     prompt = NA
   )
 
-  expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_message(
-    ensure_data_in_responses(mock_response),
-    "Dropped 1 row missing data at either class_id, student_id, or prompt"
-  )
+  ensure_data_in_responses(mock_response) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
+    expect_nrow(0)
 })
 
 test_that("empty strings are treated like NA when ensuring required columns", {
@@ -193,11 +180,9 @@ test_that("empty strings are treated like NA when ensuring required columns", {
     prompt = ""
   )
 
-  expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 0)
-  expect_message(
-    ensure_data_in_responses(mock_response),
-    "Dropped 1 row missing data at either class_id, student_id, or prompt"
-  )
+  ensure_data_in_responses(mock_response) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
+    expect_nrow(0)
 })
 
 test_that("multiple dropped responses have a comprehensive message", {
@@ -207,11 +192,9 @@ test_that("multiple dropped responses have a comprehensive message", {
     prompt = c(1, 1, NA, 1)
   )
 
-  expect_nrow(suppressWarnings(ensure_data_in_responses(mock_response)), 1)
-  expect_message(
-    ensure_data_in_responses(mock_response),
-    "Dropped 3 rows missing data at either class_id, student_id, or prompt"
-  )
+  ensure_data_in_responses(mock_response) %>%
+    expect_message("Dropped 3 rows missing data at either class_id, student_id, or prompt") %>%
+    expect_nrow(1)
 })
 
 
@@ -224,7 +207,12 @@ test_that("cannot map responses without any responses", {
 test_that("mapping MC responses adds the lookup table as an attribute", {
   map_response_options(mock_response_looktbl) %>%
     attr("option_value_table") %>%
-    expect_is("data.frame")
+    expect_vector(tibble::tibble(
+      lrn_question_reference = character(),
+      lrn_option_0 = character(),
+      lrn_option_1 = character(),
+      lrn_option_2 = character()
+    ))
 })
 
 test_that("lookup table cannot be created without type and ref.", {
@@ -244,25 +232,19 @@ test_that("lookup table cannot be created without type and ref.", {
   )
 })
 
-test_that("the lookup table includes minimum information for mapping", {
-  map_response_options(mock_response_looktbl) %>%
-    attr("option_value_table") %>%
-    expect_named(c("lrn_question_reference", paste0("lrn_option_", 0:2)))
-})
-
 test_that("the lookup table only includes multiple choice questions", {
-  mcq_pos <- with(mock_response_looktbl, lrn_type == 'mcq')
+  mcq_pos <- with(mock_response_looktbl, lrn_type == "mcq")
   mcq_item_ids <- mock_response_looktbl[["lrn_question_reference"]][mcq_pos]
 
   actual <- map_response_options(mock_response_looktbl) %>%
     attr("option_value_table")
 
-  expect_true(all(actual[['lrn_question_reference']] %in% mcq_item_ids))
+  expect_true(all(actual[["lrn_question_reference"]] %in% mcq_item_ids))
 })
 
 test_that("the lookup table only has unique entries", {
-  mcq_pos <- with(mock_response_looktbl, lrn_type == 'mcq')
-  expected <- mock_response_looktbl[['lrn_question_reference']][mcq_pos] %>%
+  mcq_pos <- with(mock_response_looktbl, lrn_type == "mcq")
+  expected <- mock_response_looktbl[["lrn_question_reference"]][mcq_pos] %>%
     unique() %>%
     length()
 
@@ -326,7 +308,7 @@ test_that("response processing methods do not need to be called in order", {
 })
 
 test_that("general response processing returns a tibble", {
-  expect_is(process_responses(mock_responses_integration), "tbl_df")
+  expect_s3_class(process_responses(mock_responses_integration), "tbl_df")
 })
 
 test_that("general response processing method is the sum of its parts", {
@@ -334,7 +316,7 @@ test_that("general response processing method is the sum of its parts", {
     mock_responses_integration %>%
       process_responses(),
     mock_responses_integration %>%
-      as_tibble() %>%
+      tibble::as_tibble() %>%
       ensure_data_in_responses() %>%
       convert_types_in_responses() %>%
       map_response_options()
@@ -346,7 +328,7 @@ test_that("general response processing allows setting the time zone", {
     mock_responses_integration %>%
       process_responses(time_zone = Sys.timezone()),
     mock_responses_integration %>%
-      as_tibble() %>%
+      tibble::as_tibble() %>%
       ensure_data_in_responses() %>%
       convert_types_in_responses(time_zone = Sys.timezone()) %>%
       map_response_options()
@@ -413,5 +395,5 @@ test_that("responses can be processed from a specific class in a zip file", {
 
 test_that("processing responses shows no errors with a subset of real data", {
   test_resp <- read.csv("../data/responses.csv")
-  expect_error(suppressWarnings(process_responses(test_resp)), NA)
+  expect_error(process_responses(test_resp) %>% suppressMessages(), NA)
 })
