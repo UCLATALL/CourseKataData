@@ -15,4 +15,5 @@ NULL
 # replacements to base functions.
 #' @import rlang
 #' @import vctrs
+#' @import fs
 NULL

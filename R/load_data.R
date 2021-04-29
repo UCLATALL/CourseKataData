@@ -18,33 +18,34 @@
 #'   table are merged int a single `tibble`.
 #'
 #' @export
-load_data <- function(object, regexp = ".*", class_id = NULL) {
-  stopifnot(is.data.frame(object) || is.character(object))
+load_data <- function(object, regexp = '.*', class_id = NULL) {
+  UseMethod("load_data", object)
+}
 
-  if (is.character(object) && !is.null(class_id)) {
+load_data.data.frame <- function(object, regexp = ".*", class_id = NULL) {
+  tibble::as_tibble(object) %>%
+    purrr::modify_if(is.factor, as.character)
+}
+
+load_data.character <- function(object, regexp = ".*", class_id = NULL) {
+  object <- path_expand(object)
+
+  if (!is_null(class_id)) {
     cls_pattern <- ifelse(class_id == "", class_id, paste0(class_id, "/"))
     regexp <- paste0(cls_pattern, regexp, collapse = "|")
   }
 
-  if (is.character(object)) {
-    object <- fs::path_expand(object)
+  # extract all zips and filter all directories down to a file list
+  files_and_dirs <- purrr::map_if(object, is_zip_file, extract_to_temp, regexp = regexp)
+  lists_of_files <- purrr::map_if(files_and_dirs, fs::is_dir, dir_to_files, regexp = regexp)
+  files <- stringr::str_subset(purrr::flatten_chr(lists_of_files), regexp)
 
-    # extract all zips and filter all dirs down to a file list
-    files_and_dirs <- purrr::map_if(object, is_zip_file, extract_to_temp, regexp = regexp)
-    lists_of_files <- purrr::map_if(files_and_dirs, fs::is_dir, dir_to_files, regexp = regexp)
-    files <- stringr::str_subset(purrr::flatten_chr(lists_of_files), regexp)
+  if (length(files) == 0) abort(c(
+    'No files were found matching the regexp/class_id combination given.\n',
+    sprintf('Combined regular expression: %s', regexp)
+  ))
 
-    if (length(files) == 0) {
-      rlang::abort(paste0(
-        "No files were found matching the regexp/class_id combination given.\n",
-        "  combined regular expression: ", regexp
-      ))
-    }
-
-    # read in and combine files
-    dfs <- purrr::map(files, utils::read.csv, stringsAsFactors = FALSE)
-    object <- purrr::reduce(dfs, vctrs::vec_c)
-  }
-
-  purrr::modify_if(tibble::as_tibble(object), is.factor, as.character)
+  # read in and combine files
+  dfs <- purrr::map(files, utils::read.csv, stringsAsFactors = FALSE)
+  purrr::reduce(dfs, vctrs::vec_c) %>% load_data.data.frame()
 }

@@ -9,6 +9,19 @@ is_zip_file <- function(path) {
 }
 
 
+#' Check if x is not in the look-up table
+#'
+#' @inheritParams base::match
+#' @returns A logical vector, indicating if a match was NOT located for each element of x: thus the
+#'   values are TRUE or FALSE and never NA.
+#'
+#' @seealso base::match
+#' @rdname notin
+`%notin%` <- function(x, table) {
+  !(x %in% table)
+}
+
+
 #' Extract a zip file to a temporary directory.
 #'
 #' Vectorized over path and pattern.
