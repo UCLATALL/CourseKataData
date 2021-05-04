@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{dir_to_files}
 \alias{dir_to_files}
-\title{Get all files in all subdirectories}
+\title{Get all files in all sub-directories}
 \usage{
 dir_to_files(dir_path, regexp)
 }
@@ -10,6 +10,6 @@ dir_to_files(dir_path, regexp)
 \item{regexp}{A regular expression (e.g. \verb{[.]csv$}) passed on to \code{\link[=grep]{grep()}} to filter paths.}
 }
 \description{
-Get all files in all subdirectories
+Get all files in all sub-directories
 }
 \keyword{internal}

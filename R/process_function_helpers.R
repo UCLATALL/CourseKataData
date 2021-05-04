@@ -5,7 +5,16 @@ safe_convert_json <- function(json_col) {
   purrr::map(json_col, possibly_parse)
 }
 
-# Ensure that a data frame has the required columns or signal with a message
+
+#' Ensure that a data frame has the required columns or signal with a message
+#'
+#' @param data The [`data.frame`] to check.
+#' @param required_columns A character vector of columns to ensure.
+#' @param signal The method used to signal if any of the columns are missing (e.g. [`abort`]).
+#' @param message_prefix A string to prepend to the message.
+#'
+#' @return A logical indicating if all the columns were present (`TRUE`) or not (`FALSE`).
+#' @keywords internal
 ensure_columns <- function(data, required_columns, signal, message_prefix = "") {
   missing_required_cols <- !required_columns %in% names(data)
   if (any(missing_required_cols)) {

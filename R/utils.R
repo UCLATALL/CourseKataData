@@ -8,20 +8,6 @@ is_zip_file <- function(path) {
   fs::is_file(path) & fs::path_ext(path) == "zip"
 }
 
-
-#' Check if x is not in the look-up table
-#'
-#' @inheritParams base::match
-#' @returns A logical vector, indicating if a match was NOT located for each element of x: thus the
-#'   values are TRUE or FALSE and never NA.
-#'
-#' @seealso base::match
-#' @rdname notin
-`%notin%` <- function(x, table) {
-  !(x %in% table)
-}
-
-
 #' Extract a zip file to a temporary directory.
 #'
 #' Vectorized over path and pattern.
@@ -53,7 +39,7 @@ extract_to_temp <- function(path, regexp = ".*") {
 }
 
 
-#' Get all files in all subdirectories
+#' Get all files in all sub-directories
 #'
 #' @inheritParams fs::dir_ls
 #' @keywords internal

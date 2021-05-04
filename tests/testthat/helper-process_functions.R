@@ -3,19 +3,24 @@
 #' Check to see if you are running R interactively and then return the
 #' appropriate relative path to the test data directory.
 #'
-#' @return The relative path to the test data directory.
-data_dir <- function() {
-  fs::path(if (interactive()) "tests" else "..", "data")
-}
-
-
-#' Get a file from the test data directory
-#'
 #' @param file_name The file to retrieve.
 #'
-#' @return The relative file path to the data file in the test data directory.
-data_file <- function(file_name) {
-  fs::path(data_dir(), file_name)
+#' @return The relative path to the test data directory, or the specified files there.
+data_dir <- function (file_name = "") {
+  fs::path(if (interactive()) "tests/testthat" else ".", "data", file_name)
+}
+
+unzipped_dir <- function(file_name = "") {
+  dir <- data_dir("unzipped")
+  if (!fs::dir_exists(dir)) {
+    zip::unzip(data_dir("zipped.zip"), exdir = data_dir("unzipped"))
+  }
+  fs::path(dir, file_name)
+}
+
+class_dir <- function(file_name = "") {
+  dir <- unzipped_dir("classes/class_1")
+  fs::path(dir, file_name)
 }
 
 

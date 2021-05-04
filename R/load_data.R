@@ -1,30 +1,51 @@
-#' Load file(s) from a directory, zipped directory, or file path.
+#' Load CourseKata data from a directory, zipped directory, file path(s), or memory
+#'
+#' This function is useful for loading CourseKata files from various sources. As a general purpose
+#' function, it has a few different parameters to work with. The most common usage will likely be
+#' selecting specific types of files to load from a CourseKata download. To do this, pass in a path
+#' (or a vector of paths) that points to a data download, and additionally use the `regexp` argument
+#' to specify what kind of file you want (e.g. "responses"). The function will then load in all of
+#' the "responses.csv" files it files at the locations you specified. You can also directly pass in
+#' file names instead of the directory/pattern combination. Finally, you can optionally specify a
+#' `class_id` if you know it.
 #'
 #' @param object The object to process the data from. This can be one of a variety of options:
-#'   - the path to a CourseKata data download zip file
-#'   - the path to an extracted data download directory
-#'   - the path to a specific CSV file (e.g. `classes.csv`)
-#'   - the `data.frame` loaded from a CSV file (useful for writing unit tests)
+#'   - the path(s) to a CourseKata data download zip file or the directory extracted from that zip
+#'   - the path(s) to a specific CSV file (e.g. `classes.csv`)
+#'   - a [`data.frame`]
 #' @param regexp If `object` is a directory or zipped directory, a [`regex`] pattern indicating
 #'   which file names to search for. The default value `'.*'` matches all files.
 #' @param class_id (Optional) A character vector of the IDs of specific classes you want to extract
 #'   data for. These values should correspond to the names of the directories where the desired CSV
 #'   files can be found in the original data download.
 #'
-#' @return The resulting data frame will always be returned as a [`tibble`] with all factor
-#'   variables converted to character. If the `object` is a `data.frame` it will still be converted
-#'   to a `tibble`. If `object` is a path of some type, the files at the given location are filtered
-#'   against `regexp` and `class_id`, and then read in. As the files are read, the rows of each
-#'   table are merged int a single `tibble`.
+#' @return
+#'   When a file path (or vector of file paths) is given, the files are read in and merged into a
+#'   single table. Behind the scenes, we use `data.table` to process the data because it is very
+#'   fast. However, the `data.table` interface is often un-intuitive, so we convert the output to a
+#'   [`tibble`], which is just a prettier version of a [`data.frame`].
 #'
-#' @export
+#'   When a directory or zip file is passed, the `regexp` argument is required to determine which
+#'   files you want from that directory. In general, you can keep this simple as the CourseKata data
+#'   directories are structured simply and consistently. Something like "responses" should reliably
+#'   find the "responses.csv" files. If you are having troubles (perhaps the instructor included
+#'   supplementary files called "student_responses_and_comments.csv") you can construct a more
+#'   specific pattern (see [`regex`]). The matched files are read in just as if you had passed their
+#'   specific paths to the function.
+#'
+#'   Sometimes it is useful to only extract data related to a specific class. To do this, you can
+#'   use the `class_id` argument. If you include the ID of the class you want (you can get this from
+#'   "classes.csv"), the `regexp` argument will be modified such that it only matches files from
+#'   that class. For this reason, it isn't recommended to use the `class_id` in your `regexp` *and*
+#'   use the `class_id` argument.
+#'
+#' @keywords internal
 load_data <- function(object, regexp = '.*', class_id = NULL) {
   UseMethod("load_data", object)
 }
 
 load_data.data.frame <- function(object, regexp = ".*", class_id = NULL) {
-  tibble::as_tibble(object) %>%
-    purrr::modify_if(is.factor, as.character)
+  purrr::modify_if(tibble::tibble(object), is.factor, as.character)
 }
 
 load_data.character <- function(object, regexp = ".*", class_id = NULL) {
@@ -46,6 +67,14 @@ load_data.character <- function(object, regexp = ".*", class_id = NULL) {
   ))
 
   # read in and combine files
-  dfs <- purrr::map(files, utils::read.csv, stringsAsFactors = FALSE)
-  purrr::reduce(dfs, vctrs::vec_c) %>% load_data.data.frame()
+  reader <- function(path) data.table::fread(
+    file = path,
+    stringsAsFactors = FALSE,
+    showProgress = FALSE
+  )
+  tbl <- files %>%
+    purrr::map(reader) %>%
+    purrr::reduce(vctrs::vec_c) %>%
+    tibble::as_tibble() %>%
+    structure(".internal.selfref" = NULL)
 }

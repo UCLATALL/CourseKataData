@@ -16,7 +16,7 @@ If you are going to use these data, it may be useful to convert them to lists by
 this argument as \code{TRUE}.}
 }
 \value{
-A \code{\link{tibble}} of the same size as \code{responses} with an appropriate type for each variable.
+A table of the same size as \code{responses} with an appropriate type for each variable.
 }
 \description{
 \code{convert_types_in_responses()} takes a CourseKata responses table and returns a responses table

@@ -15,7 +15,7 @@ added as the \code{option_value_table} attribute and the \code{response} column
 altered by mapping the responses using the table.
 }
 \description{
-Extract a lookup table for the multiple-choice questions in the set and then
+Extract a look-up table for the multiple-choice questions in the set and then
 use it to map response options to the values. The table is comprised of the
 \code{lrn_question_reference} and \verb{lrn_option_<option numbers>} columns, and it is
 added to the resulting respnoses table as the \code{option_value_table} attribute.

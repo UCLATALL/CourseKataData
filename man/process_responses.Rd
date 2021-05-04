@@ -9,10 +9,9 @@ process_responses(object, time_zone = "UTC", class_id = NULL)
 \arguments{
 \item{object}{The object to process the data from. This can be one of a variety of options:
 \itemize{
-\item the path to a CourseKata data download zip file
-\item the path to an extracted data download directory
-\item the path to a specific CSV file (e.g. \code{classes.csv})
-\item the \code{data.frame} loaded from a CSV file (useful for writing unit tests)
+\item the path(s) to a CourseKata data download zip file or the directory extracted from that zip
+\item the path(s) to a specific CSV file (e.g. \code{classes.csv})
+\item a \code{\link{data.frame}}
 }}
 
 \item{time_zone}{The time zone to use when parsing date-time objects (see \code{\link{timezones}}).}

@@ -1,6 +1,6 @@
 ex_dir <- fs::path(tempdir(check = TRUE), "coursekdatadata_process_data")
-zip_file <- data_file("zipped.zip")
-zip::unzip(data_file("zipped.zip"), exdir = ex_dir)
+zip_file <- data_dir("zipped.zip")
+zip::unzip(data_dir("zipped.zip"), exdir = ex_dir)
 
 test_env <- rlang::env()
 

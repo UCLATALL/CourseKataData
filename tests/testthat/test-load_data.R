@@ -97,54 +97,41 @@ make_test_zip <- function(dir_in_temp, files_data, files_n, files_make_in,
 }
 
 
-# from a data frame
-test_that('loading a data frame converts it to a normalized tibble', {
-  test_df <- df()
-  object <- load_data(test_df)
-  expect_s3_class(object, "tbl_df")
-  expect_vector(object$x, character(), 1)
+
+# Basics --------------------------------------------------------------------------------------
+
+# responses.csv has 53 rows and 41 columns
+
+test_that('data can be loaded from a vector of files to a tibble', {
+  files <- class_dir(c("responses.csv", "responses.csv"))
+  actual <- load_data(files)
+  expect_s3_class(actual, "tbl_df")
+  expect_identical(ncol(actual), 41L)
+  expect_identical(nrow(actual), 53L * 2L)
 })
 
-
-# from a file path
-test_that('data can be loaded from a single file', {
-  test_df <- df()
-  test_file <- make_test_csv(test_df)
-
-  expect_identical(load_data(test_file), load_data(test_df))
+test_that("data can be loaded from a directory with a regexp to indicate files", {
+  actual <- load_data(class_dir(), "responses.csv")
+  expect_identical(actual, load_data(class_dir("responses.csv")))
 })
 
-test_that('data can be loaded from a file vector', {
-  test_df <- df()
-  test_files <- make_test_csvs(test_df, 2)
-
-  object <- load_data(test_files)
-  expected <- load_data(vctrs::vec_rep(test_df, 2))
-  expect_identical(object, expected)
-})
-
-
-# filtering arguments
-test_that('an error is thrown if no files match filter arguments', {
-  test_df <- df()
-  test_files <- make_test_csvs(test_df, 2)
-
+test_that("an error is thrown if the requested file cannot be found", {
   message <- 'No files were found matching the regexp/class_id combination given.'
-  expect_error(load_data(test_files, regexp = 'does not exist'), message)
-  expect_error(load_data(test_files, class_id = 'does not exist'), message)
+  expect_error(load_data(data_dir('does not exist')), "does not exist or is non-readable")
+  expect_error(load_data(data_dir(), regexp = 'does not exist'), message)
+  expect_error(load_data(data_dir(), class_id = 'does not exist'), message)
 })
+
+
+# Advanced filtering --------------------------------------------------------------------------
+# The file vector filtering isn't particularly useful, but the way that directories are filtered is
+# by listing their files then filtering the file vector.
 
 test_that('a file vector can be filtered by regexp when loading', {
-  test_df <- df()
-  test_files <- make_test_csvs(test_df, 2)
-
-  regexp <- sprintf('.*%s$', fs::path_file(test_files[[1]]))
-  object <- load_data(test_files, regexp = regexp)
-  expected <- load_data(test_df)
-  expect_identical(object, expected)
+  files <- class_dir(c("responses.csv", "classes.csv"))
+  expect_identical(load_data(files, "responses"), load_data(class_dir("responses.csv")))
 })
 
-# this only fails on win-latest
 test_that('a file vector can be filtered by class_id when loading', {
   test_df <- df()
   add_prefix <- function(x) paste0('filter-id-', x)

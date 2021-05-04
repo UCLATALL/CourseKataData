@@ -18,8 +18,6 @@ mock_responses_integration <- data.frame(
   lrn_question_reference = 1
 )
 
-mock_integration_processed <- process_responses(mock_responses_integration)
-
 top_dir <- fs::path(tempdir(check = TRUE), "data_download")
 class_dir <- fs::path(top_dir, "classes", c("class_1", "class_2")) %>% fs::dir_create()
 
@@ -34,73 +32,41 @@ zip::zipr(zip_file, top_dir)
 
 # Tests: Type conversion --------------------------------------------------
 
-test_that("integer columns are appropriately typed if they exist", {
-  # this mock should have all expected integer columns
-  mock_response <- data.frame(
-    attempt = "1",
-    lrn_question_position = "1"
+test_that("response structure is appropriately typed", {
+  ptype <- tibble::tibble(
+    attempt = integer(),
+    lrn_question_position = integer(),
+    points_possible = numeric(),
+    points_earned = numeric(),
+    dt_submitted = new_datetime(tzone = "UTC"),
+    lrn_dt_started = new_datetime(tzone = "UTC"),
+    lrn_dt_saved = new_datetime(tzone = "UTC")
   )
 
-  actual <- convert_types_in_responses(mock_response)
-  expect_vector(actual$attempt, integer())
-  expect_vector(actual$lrn_question_position, integer())
-})
+  actual <- load_data(class_dir("responses.csv")) %>%
+    convert_types_in_responses()
 
-test_that("numeric columns are appropriately typed if they exist", {
-  # this mock should have all expected numeric columns
-  mock_response <- data.frame(
-    points_possible = "1",
-    points_earned = "1"
-  )
+  typed <- actual[, names(ptype)]
+  char_only <- actual[, !vctrs::vec_in(names(actual), names(ptype))]
 
-  actual <- convert_types_in_responses(mock_response)
-  expect_vector(actual$points_possible, numeric())
-  expect_vector(actual$points_earned, numeric())
-})
-
-test_that("datetime columns are appropriately typed if they exist", {
-  # this mock should have all expected datetime columns
-  mock_response <- data.frame(
-    dt_submitted = as.character(Sys.Date()),
-    lrn_dt_started = as.character(Sys.Date()),
-    lrn_dt_saved = as.character(Sys.Date())
-  )
-
-  actual <- convert_types_in_responses(mock_response)
-  expect_vector(actual$dt_submitted, new_datetime(tzone = "UTC"))
-  expect_vector(actual$lrn_dt_started, new_datetime(tzone = "UTC"))
-  expect_vector(actual$lrn_dt_saved, new_datetime(tzone = "UTC"))
+  expect_vector(typed, ptype)
+  purrr::map(char_only, expect_vector, ptype = character())
 })
 
 test_that("datetime columns can be read-in as a specific time zone", {
-  mock_response <- data.frame(
-    dt_submitted = as.character(Sys.Date())
-  )
-
-  actual <- convert_types_in_responses(mock_response, time_zone = Sys.timezone())
+  data <- load_data(class_dir("responses.csv"))
+  actual <- convert_types_in_responses(data, time_zone = Sys.timezone())
   expect_vector(actual$dt_submitted, new_datetime(tzone = Sys.timezone()))
 })
 
 test_that("list columns are appropriately converted from JSON if requested", {
-  # this mock should have all expected list columns
-  mock_response <- data.frame(
-    lrn_response_json = c("{}", "", ";")
-  )
+  data <- load_data(class_dir("responses.csv"))
 
-  actual <- convert_types_in_responses(mock_response, convert_json = TRUE)
+  actual <- convert_types_in_responses(data, convert_json = TRUE)
   expect_vector(actual$lrn_response_json, list())
 
-  actual <- convert_types_in_responses(mock_response, convert_json = FALSE)
+  actual <- convert_types_in_responses(data, convert_json = FALSE)
   expect_vector(actual$lrn_response_json, character())
-})
-
-test_that("all non-explicitly-typed columns are converted to character", {
-  mock_response <- data.frame(
-    some_variable = factor(1)
-  )
-
-  actual <- convert_types_in_responses(mock_response)
-  expect_vector(actual$some_variable, character())
 })
 
 
@@ -336,64 +302,9 @@ test_that("general response processing allows setting the time zone", {
 })
 
 
-# Tests: Processing from files --------------------------------------------
-
-test_that("responses can be processed from a file name", {
-  expect_identical(
-    process_responses(resp_file_1),
-    mock_integration_processed
-  )
-})
-
-test_that("responses can be processed from a directory path", {
-  expect_identical(
-    process_responses(class_dir[[1]]),
-    mock_integration_processed
-  )
-})
-
-test_that("multiple response tables can be processed from a directory path", {
-  expect_identical(
-    process_responses(top_dir),
-    rbind(mock_responses_integration, mock_responses_integration) %>%
-      process_responses()
-  )
-})
-
-test_that("responses can be processed from a zip file", {
-  expect_identical(
-    process_responses(zip_file),
-    rbind(mock_responses_integration, mock_responses_integration) %>%
-      process_responses()
-  )
-})
-
-test_that("responses can be processed from a specific class in a directory", {
-  expect_identical(
-    process_responses(top_dir, class_id = "class_1"),
-    mock_integration_processed
-  )
-})
-
-test_that("responses can be processed from a multiple classes in a directory", {
-  expect_identical(
-    process_responses(top_dir, class_id = c("class_1", "class_2")),
-    rbind(mock_responses_integration, mock_responses_integration) %>%
-      process_responses()
-  )
-})
-
-test_that("responses can be processed from a specific class in a zip file", {
-  expect_identical(
-    process_responses(zip_file, class_id = "class_1"),
-    mock_integration_processed
-  )
-})
-
-
 # Tests: Real data --------------------------------------------------------
 
 test_that("processing responses shows no errors with a subset of real data", {
-  test_resp <- read.csv("../data/responses.csv")
+  test_resp <- read.csv(class_dir("responses.csv"))
   expect_error(process_responses(test_resp) %>% suppressMessages(), NA)
 })

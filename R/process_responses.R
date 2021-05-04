@@ -28,25 +28,22 @@ process_responses <- function(object, time_zone = "UTC", class_id = NULL) {
 
 #' Ensure a responses data frame has the required columns.
 #'
-#' A responses table isn't very useful without some basic information: the class
-#' the response was elicited in, the student it was elicited from, and the
-#' prompt that elicited the response (but not necessarily the response -- a
-#' missing response is a response in itself). `ensure_data_in_responses()`
-#' ensures that the columns exist in the data frame (failing with an error
-#' message if not) and filters out rows that are missing required data (emitting
-#' a warning if so).
+#' A responses table isn't very useful without some basic information: the class the response was
+#' elicited in, the student it was elicited from, and the prompt that elicited the response (but not
+#' necessarily the response -- a missing response is a response in itself). This function ensures
+#' that the columns exist in the data frame (failing with an error message if not) and filters out
+#' rows that are missing required data (emitting a warning if so).
 #'
 #' @param responses A CourseKata responses table (e.g. from responses.csv).
 #'
-#' @return If no problems are found, the original responses table is returned as
-#'   a \code{\link{tibble}}. When problems are found, the corresponding rows are
-#'   removed from the output table.
+#' @return If no problems are found, the original object is returned. When problems are found, the
+#'   corresponding rows are removed from the output table.
 #'
 #' @seealso process_responses
 #' @export
 ensure_data_in_responses <- function(responses) {
   required_cols <- c("class_id", "student_id", "prompt")
-  ensure_columns(responses, required_cols, rlang::abort)
+  ensure_columns(responses, required_cols, abort)
 
   # find missing data in the required columns
   missing_data_matrix <- tibble::as_tibble(responses)[required_cols] %>%
@@ -64,7 +61,7 @@ ensure_data_in_responses <- function(responses) {
   }
 
   # filter out the rows with missing data
-  tibble::as_tibble(responses)[!is_row_missing_data, ]
+  responses[!is_row_missing_data, ]
 }
 
 
@@ -82,7 +79,7 @@ ensure_data_in_responses <- function(responses) {
 #' @inheritParams process_auxillary
 #' @inheritParams ensure_data_in_responses
 #'
-#' @return A [`tibble`] of the same size as `responses` with an appropriate type for each variable.
+#' @return A table of the same size as `responses` with an appropriate type for each variable.
 #'
 #' @seealso process_responses
 #' @export
@@ -91,26 +88,26 @@ convert_types_in_responses <- function(responses, time_zone = "UTC", convert_jso
   doubles <- c("points_possible", "points_earned")
   datetimes <- c("dt_submitted", "lrn_dt_started", "lrn_dt_saved")
 
-  # parsers located in process_function_helpers.R
   converted <- responses %>%
+    # prevent problems if strings are factors
     purrr::modify(as.character) %>%
-    # prevent probs from stringsAsFactors
+    # now do all type conversions (see process_function_helpers.R)
     purrr::modify_at(integers, parse_integer) %>%
     purrr::modify_at(doubles, parse_double) %>%
     purrr::modify_at(datetimes, parse_datetime, tzone = time_zone)
 
   if (convert_json) {
-    converted <- converted %>% purrr::modify_at("lrn_response_json", safe_convert_json)
+    converted <- purrr::modify_at(converted, "lrn_response_json", safe_convert_json)
   }
 
   attributes(converted) <- attributes(responses)
-  tibble::as_tibble(converted)
+  converted
 }
 
 
 #' Map multiple-choice options in a responses table to their values.
 #'
-#' Extract a lookup table for the multiple-choice questions in the set and then
+#' Extract a look-up table for the multiple-choice questions in the set and then
 #' use it to map response options to the values. The table is comprised of the
 #' `lrn_question_reference` and `lrn_option_<option numbers>` columns, and it is
 #' added to the resulting respnoses table as the `option_value_table` attribute.
@@ -129,14 +126,14 @@ map_response_options <- function(responses) {
   # just easier to type
   lrn_ref <- "lrn_question_reference"
 
-  # make sure there are responses and that we can find mc questions
+  # make sure there are responses and that we can find multiple-choice questions
   ensure_columns(responses, "response", rlang::abort, "No responses to map.")
   map_cols <- c("lrn_type", lrn_ref)
-  if (!ensure_columns(responses, map_cols, rlang::warn, "Can\'t create lookup table.")) {
+  if (!ensure_columns(responses, map_cols, rlang::warn, "Can\'t create look-up table.")) {
     return(responses)
   }
 
-  # create the lookup table
+  # create the look-up table
   mc_rows <- responses[["lrn_type"]] == "mcq"
   col_pat <- paste0(lrn_ref, "|lrn_option_")
   mc_cols <- stringr::str_starts(names(responses), col_pat)
