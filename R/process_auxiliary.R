@@ -1,6 +1,6 @@
-#' Processing functions for all auxillary (non-response) data.
+#' Processing functions for all auxiliary (non-response) data.
 #'
-#' These functions are for individually processing the auxillary components of a CourseKata data
+#' These functions are for individually processing the auxiliary components of a CourseKata data
 #' download. These functions assume that you are working files downloaded from CourseKata, as these
 #' files have a predictable structure.
 #'
@@ -8,7 +8,7 @@
 #' the path to the specif
 #'
 #' @inheritParams load_data
-#' @param time_zone The time zone to use when parsing date-time objects (see [`timezones`]).
+#' @inheritParams parse_datetime
 #' @param convert_json For speed of processing, columns containing JSON are just read in as strings.
 #'   If you are going to use these data, it may be useful to convert them to lists by specifying
 #'   this argument as `TRUE`.
@@ -19,11 +19,11 @@
 #'   of variables in each of the tables, see the README for this package (included in the data
 #'   download or online at <https://github.com/UCLATALL/CourseKataData>).
 #'
-#' @name process_auxillary
+#' @name process_auxiliary
 #' @family processing functions
 NULL
 
-#' @rdname process_auxillary
+#' @rdname process_auxiliary
 #' @export
 process_classes <- function(object, class_id = NULL, convert_json = FALSE) {
   object <- load_data(object, "classes[.]csv$", class_id = class_id)
@@ -35,15 +35,15 @@ process_classes <- function(object, class_id = NULL, convert_json = FALSE) {
   object
 }
 
-#' @rdname process_auxillary
+#' @rdname process_auxiliary
 #' @export
 process_page_views <- function(object, time_zone = "UTC", class_id = NULL) {
   rlang::arg_match(time_zone, OlsonNames())
   load_data(object, "page_views[.]csv$", class_id = class_id) %>%
-    purrr::modify_at("dt_accessed", parse_datetime, tzone = time_zone)
+    purrr::modify_at("dt_accessed", parse_datetime, time_zone = time_zone)
 }
 
-#' @rdname process_auxillary
+#' @rdname process_auxiliary
 #' @export
 process_media_views <- function(object, time_zone = "UTC", class_id = NULL, convert_json = FALSE) {
   rlang::arg_match(time_zone, OlsonNames())
@@ -53,7 +53,7 @@ process_media_views <- function(object, time_zone = "UTC", class_id = NULL, conv
 
   # parsers located at process_function_helpers
   out <- load_data(object, "media_views[.]csv$", class_id = class_id) %>%
-    purrr::modify_at(datetimes, parse_datetime, tzone = time_zone) %>%
+    purrr::modify_at(datetimes, parse_datetime, time_zone = time_zone) %>%
     purrr::modify_at(doubles, parse_double)
 
   if (convert_json) {
@@ -63,7 +63,7 @@ process_media_views <- function(object, time_zone = "UTC", class_id = NULL, conv
   out
 }
 
-#' @rdname process_auxillary
+#' @rdname process_auxiliary
 #' @export
 process_items <- function(object, class_id = NULL, convert_json = FALSE) {
   out <- load_data(object, "items[.]csv$", class_id = class_id) %>%
@@ -76,7 +76,7 @@ process_items <- function(object, class_id = NULL, convert_json = FALSE) {
   out
 }
 
-#' @rdname process_auxillary
+#' @rdname process_auxiliary
 #' @export
 process_tags <- function(object, class_id = NULL) {
   load_data(object, "tags[.]csv$", class_id = class_id)

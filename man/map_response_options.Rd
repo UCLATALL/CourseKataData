@@ -10,15 +10,14 @@ map_response_options(responses)
 \item{responses}{A CourseKata responses table (e.g. from responses.csv).}
 }
 \value{
-A responses table as a \code{\link{tibble}} with the lookup table
-added as the \code{option_value_table} attribute and the \code{response} column
-altered by mapping the responses using the table.
+A responses table as a \code{\link{tibble}} with the lookup table added as the \code{option_value_table}
+attribute and the \code{response} column altered by mapping the responses using the table.
 }
 \description{
-Extract a look-up table for the multiple-choice questions in the set and then
-use it to map response options to the values. The table is comprised of the
-\code{lrn_question_reference} and \verb{lrn_option_<option numbers>} columns, and it is
-added to the resulting respnoses table as the \code{option_value_table} attribute.
+Extract a look-up table for the multiple-choice questions in the set and then use it to map
+response options to the values. The table is comprised of the \code{lrn_question_reference} and
+\verb{lrn_option_<option numbers>} columns, and it is added to the resulting responses table as the
+\code{option_value_table} attribute.
 }
 \seealso{
 process_responses

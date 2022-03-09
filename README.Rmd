@@ -60,7 +60,7 @@ The goal of CourseKataData is to help researchers working with CourseKata course
 
 ## Installation
 
-Download the package directly from this repository using devtools:
+Download the package directly from this repository using `devtools`:
 
 ``` r
 library(devtools)
@@ -88,7 +88,7 @@ If you would like to unzip the file first (which can sometimes be faster), you c
 process_data("path/to/downloaded/data")
 ```
 
-When you run this function it will load all of the data and create six data frames (actually [tibbles](https://tibble.tidyverse.org/), but they work pretty much the same). These are the names of the data frames that are created:
+When you run this function it will load all of the data and create six data frames (actually [`tibble`s](https://tibble.tidyverse.org/), but they work pretty much the same). These are the names of the data frames that are created:
 
  - `classes`
  - `responses`
@@ -120,7 +120,7 @@ process_data("path/to/downloaded/data", time_zone = Sys.timezone())
 
 #### Splitting Responses
 
-By default, all of the responses in the course are included in the `responses` table. These responses can be semantically split into three parts: the surveys at the beginning and end of the course, the practice quizzes at the end of each chapter, and the rest of the items in the text. If you would like to split the responses like this, there is a handy `split_responses()` function that will return a list of three tibbles:
+By default, all of the responses in the course are included in the `responses` table. These responses can be semantically split into three parts: the surveys at the beginning and end of the course, the practice quizzes at the end of each chapter, and the rest of the items in the text. If you would like to split the responses like this, there is a handy `split_responses()` function that will return a list of three tables:
 
 ``` r
 parts <- split_responses(responses)

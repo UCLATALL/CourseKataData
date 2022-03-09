@@ -99,8 +99,8 @@ test_that("responses with a missing class_id are dropped with message", {
   )
 
   ensure_data_in_responses(mock_response) %>%
-    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
-    expect_nrow(0)
+    expect_nrow(0) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt")
 })
 
 test_that("responses with a missing student_id are dropped with message", {
@@ -111,8 +111,8 @@ test_that("responses with a missing student_id are dropped with message", {
   )
 
   ensure_data_in_responses(mock_response) %>%
-    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
-    expect_nrow(0)
+    expect_nrow(0) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt")
 })
 
 test_that("responses with a missing prompt are dropped with message", {
@@ -123,8 +123,8 @@ test_that("responses with a missing prompt are dropped with message", {
   )
 
   ensure_data_in_responses(mock_response) %>%
-    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
-    expect_nrow(0)
+    expect_nrow(0) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt")
 })
 
 test_that("responses with multiple missing values have comprehensive message", {
@@ -135,8 +135,8 @@ test_that("responses with multiple missing values have comprehensive message", {
   )
 
   ensure_data_in_responses(mock_response) %>%
-    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
-    expect_nrow(0)
+    expect_nrow(0) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt")
 })
 
 test_that("empty strings are treated like NA when ensuring required columns", {
@@ -147,8 +147,8 @@ test_that("empty strings are treated like NA when ensuring required columns", {
   )
 
   ensure_data_in_responses(mock_response) %>%
-    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt") %>%
-    expect_nrow(0)
+    expect_nrow(0) %>%
+    expect_message("Dropped 1 row missing data at either class_id, student_id, or prompt")
 })
 
 test_that("multiple dropped responses have a comprehensive message", {
@@ -159,8 +159,8 @@ test_that("multiple dropped responses have a comprehensive message", {
   )
 
   ensure_data_in_responses(mock_response) %>%
-    expect_message("Dropped 3 rows missing data at either class_id, student_id, or prompt") %>%
-    expect_nrow(1)
+    expect_nrow(1) %>%
+    expect_message("Dropped 3 rows missing data at either class_id, student_id, or prompt")
 })
 
 

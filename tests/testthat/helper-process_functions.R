@@ -1,7 +1,7 @@
 #' Get the path to the test data directory
 #'
-#' Check to see if you are running R interactively and then return the
-#' appropriate relative path to the test data directory.
+#' Check to see if you are running R interactively and then return the appropriate relative path to
+#' the test data directory.
 #'
 #' @param file_name The file to retrieve.
 #'
@@ -28,7 +28,7 @@ class_dir <- function(file_name = "") {
 
 #' Expectation: does an object have the specified number of rows?
 #'
-#' @param object data.frame to test the number of rows using \code{\link{nrow}}
+#' @param object data.frame to test the number of rows using [`nrow`]
 #' @param n Expected number of rows
 #'
 #' @family expectations

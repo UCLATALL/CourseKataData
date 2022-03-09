@@ -1,37 +1,30 @@
 #' Write CourseKata data to file
 #'
-#' Processed data from the course often has one or more list-columns in it. A
-#' list-column is a column in a data frame where each of the rows (elements) in
-#' that column is a `list`. These columns have some ambiguity in how they should
-#' be written to file. As a sensible default, the function provides a mask for
-#' \code{\link[utils:write.table]{write.csv}} where the data is first passed
-#' through `convert_lists()`. See the details section for more information about
-#' the conversion process.
+#' Processed data from the course often has one or more list-columns in it. A list-column is a
+#' column in a data frame where each of the rows (elements) in that column is a `list`. These
+#' columns have some ambiguity in how they should be written to file. As a sensible default, the
+#' function provides a mask for [`utils::write.csv`] where the data is first passed through
+#' [`convert_lists`]. See the details section for more information about the conversion process.
 #'
-#' Data from CourseKata classes often has JSON (Javascript Object Notation) in
-#' some of the columns. Though it is called *Javascript* object notation, this
-#' is a standard and common format for sending and receiving data because it has
-#' clear rules for representing various data structures. When this kind of data
-#' is read-in using one of the `process_*()` functions like
-#' \code{\link{process_data}}, it is converted to a `list`, which is a more
-#' natural form of data in R. Unfortunately, when a data frame has a
-#' list-column, there is ambiguity in how to write that column to file. JSON is
-#' a sensible default because it does not lose any information in the conversion
-#' process, even in more complex cases.
+#' Data from CourseKata classes often has JSON (Javascript Object Notation) in some of the columns.
+#' Though it is called *JavaScript* object notation, this is a standard and common format for
+#' sending and receiving data because it has clear rules for representing various data structures.
+#' When this kind of data is read-in using one of the `process_*()` functions like [`process_data`],
+#' it is converted to a `list`, which is a more natural form of data in R. Unfortunately, when a
+#' data frame has a list-column, there is ambiguity in how to write that column to file. JSON is a
+#' sensible default because it does not lose any information in the conversion process, even in more
+#' complex cases.
 #'
-#' If you would like to write your own converted, the export functions here will
-#' let you specify one to use. An example of a custom converter and how to
-#' specify it are provided below.
+#' If you would like to write your own converted, the export functions here will let you specify one
+#' to use. An example of a custom converter and how to specify it are provided below.
 #'
 #' @inheritParams utils::write.csv
-#' @param converter An function that takes a list and returns a string. By
-#'   default, the \code{\link[jsonlite:fromJSON]{toJSON}} from the `jsonlite`
-#'   package is included and used.
+#' @param converter An function that takes a list and returns a string. By default, it uses
+#'   [`jsonlite::toJSON`].
 #' @param ... Arguments passed on to the `converter` function.
 #'
-#' @return The converted data frame (where lists are formatted as strings) is
-#'   returned. This makes it easier to use this function in a pipe
-#'   (\code{\link[magrittr:pipe]{%>%}}).
+#' @return The converted data frame (where lists are formatted as strings) is returned. This makes
+#'   it easier to use this function in a pipe [`%>%`]).
 #'
 #' @export
 #' @name export

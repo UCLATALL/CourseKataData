@@ -7,7 +7,7 @@
 #' allow overwriting or abort the process (if not being run interactively, a message is emitted
 #' noting that the variables were overwritten).
 #'
-#' @inheritParams process_auxillary
+#' @inheritParams process_auxiliary
 #' @param path The path to a CourseKata data download zip file or the path to an extracted data
 #'   download directory.
 #' @param split_responses If `TRUE`, split the responses out into three tables (`surveys`,

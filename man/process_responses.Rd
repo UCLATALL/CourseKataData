@@ -35,6 +35,6 @@ multiple-response option indices in \code{response} (\code{lrn_type = 'mcq'}) ar
 }
 \seealso{
 Other processing functions: 
-\code{\link{process_auxillary}}
+\code{\link{process_auxiliary}}
 }
 \concept{processing functions}

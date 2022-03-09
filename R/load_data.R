@@ -22,7 +22,7 @@
 #' @return
 #'   When a file path (or vector of file paths) is given, the files are read in and merged into a
 #'   single table. Behind the scenes, we use `data.table` to process the data because it is very
-#'   fast. However, the `data.table` interface is often un-intuitive, so we convert the output to a
+#'   fast. However, the `data.table` interface is often unintuitive, so we convert the output to a
 #'   [`tibble`], which is just a prettier version of a [`data.frame`].
 #'
 #'   When a directory or zip file is passed, the `regexp` argument is required to determine which

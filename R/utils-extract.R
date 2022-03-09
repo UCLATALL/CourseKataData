@@ -8,6 +8,14 @@ is_zip_file <- function(path) {
   fs::is_file(path) & fs::path_ext(path) == "zip"
 }
 
+#' Get all files in all sub-directories
+#'
+#' @inheritParams fs::dir_ls
+#' @keywords internal
+dir_to_files <- function(dir_path, regexp = ".*") {
+  fs::dir_ls(dir_path, regexp = regexp, type = "file", recurse = TRUE)
+}
+
 #' Extract a zip file to a temporary directory.
 #'
 #' Vectorized over path and pattern.
@@ -22,7 +30,7 @@ extract_to_temp <- function(path, regexp = ".*") {
     zip_list <- utils::unzip(zip_file, list = TRUE)[["Name"]]
     targets <- stringr::str_subset(zip_list, regexp)
 
-    # remove possible bad directory with : in filenames
+    # remove possible bad directory with : in file names
     safe_targets <- stringr::str_split_fixed(targets, "/", 2)[, 2]
     safe_directories <- fs::path_dir(safe_targets)
 
@@ -36,13 +44,4 @@ extract_to_temp <- function(path, regexp = ".*") {
 
     temp_dir
   })
-}
-
-
-#' Get all files in all sub-directories
-#'
-#' @inheritParams fs::dir_ls
-#' @keywords internal
-dir_to_files <- function(dir_path, regexp) {
-  fs::dir_ls(dir_path, regexp = regexp, type = "file", recurse = TRUE)
 }

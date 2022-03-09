@@ -6,7 +6,7 @@
 #' multiple-response option indices in `response` (`lrn_type = 'mcq'`) are mapped to their values
 #' (`lrn_option_<index>`) with `map_response_options()`.
 #'
-#' @inheritParams process_auxillary
+#' @inheritParams process_auxiliary
 #'
 #' @return A [`tibble`] of all responses found in the given path or data frame. If there are
 #'   multiple `responses.csv` files, they are merged together and can be distinguished by the
@@ -24,7 +24,6 @@ process_responses <- function(object, time_zone = "UTC", class_id = NULL) {
     convert_types_in_responses(time_zone = time_zone) %>%
     map_response_options()
 }
-
 
 #' Ensure a responses data frame has the required columns.
 #'
@@ -72,11 +71,11 @@ ensure_data_in_responses <- function(responses) {
 #'  types:
 #'   - **integer**: `attempt`, `lrn_question_position`
 #'   - **number**: `points_possible`, `points_earned`
-#'   - **datetime**: `dt_submitted`, `lrn_dt_started`, `lrn_dt_saved`
+#'   - **date-time**: `dt_submitted`, `lrn_dt_started`, `lrn_dt_saved`
 #'   - **list**: `lrn_response_json`
 #'   - **character**: all other columns not listed above
 #'
-#' @inheritParams process_auxillary
+#' @inheritParams process_auxiliary
 #' @inheritParams ensure_data_in_responses
 #'
 #' @return A table of the same size as `responses` with an appropriate type for each variable.
@@ -91,32 +90,31 @@ convert_types_in_responses <- function(responses, time_zone = "UTC", convert_jso
   converted <- responses %>%
     # prevent problems if strings are factors
     purrr::modify(as.character) %>%
-    # now do all type conversions (see process_function_helpers.R)
+    # now do all type conversions
     purrr::modify_at(integers, parse_integer) %>%
     purrr::modify_at(doubles, parse_double) %>%
-    purrr::modify_at(datetimes, parse_datetime, tzone = time_zone)
+    purrr::modify_at(datetimes, parse_datetime, time_zone = time_zone)
 
   if (convert_json) {
-    converted <- purrr::modify_at(converted, "lrn_response_json", safe_convert_json)
+    converted <- converted %>%
+      purrr::modify_at("lrn_response_json", safe_convert_json)
   }
 
   attributes(converted) <- attributes(responses)
   converted
 }
 
-
 #' Map multiple-choice options in a responses table to their values.
 #'
-#' Extract a look-up table for the multiple-choice questions in the set and then
-#' use it to map response options to the values. The table is comprised of the
-#' `lrn_question_reference` and `lrn_option_<option numbers>` columns, and it is
-#' added to the resulting respnoses table as the `option_value_table` attribute.
+#' Extract a look-up table for the multiple-choice questions in the set and then use it to map
+#' response options to the values. The table is comprised of the `lrn_question_reference` and
+#' `lrn_option_<option numbers>` columns, and it is added to the resulting responses table as the
+#' `option_value_table` attribute.
 #'
 #' @inheritParams ensure_data_in_responses
 #'
-#' @return A responses table as a \code{\link{tibble}} with the lookup table
-#'   added as the `option_value_table` attribute and the `response` column
-#'   altered by mapping the responses using the table.
+#' @return A responses table as a [`tibble`] with the lookup table added as the `option_value_table`
+#'   attribute and the `response` column altered by mapping the responses using the table.
 #'
 #' @seealso process_responses
 #' @export
@@ -155,21 +153,19 @@ map_response_options <- function(responses) {
 }
 
 
-#' Map a response array to its values in a lookup table.
+#' Map a response array to its values in a look-up table.
 #'
-#' If you are using this function you very likely understand why you need to use
-#' it and can figure out what it does. It it is more likely that you want the
-#' more comprehensive function \code{\link{process_responses}}. That said, give
-#' it a response, a question reference, and a lookup table, and it will give you
-#' back the value from the lookup table that corresponse to the response.
+#' If you are using this function you very likely understand why you need to use it and can figure
+#' out what it does. It it is more likely that you want the more comprehensive function
+#' [`process_responses`]. That said, give it a response, a question reference, and a look-up table,
+#' and it will give you back the value from the look-up table that corresponds to the response.
 #'
 #' @param response A text array of response options, e.g. "\['1', '4'\]"
 #' @param reference A reference that corresponds to a `lrn_question_reference`.
-#' @param lookup_table A lookup table with a column `lrn_question_reference`,
-#'   and a column for each possible response option.
+#' @param lookup_table A lookup table with a column `lrn_question_reference`, and a column for each
+#'   possible response option.
 #'
-#' @return The value(s) indicated by the response options, separated by
-#'   semicolons if applicable.
+#' @return The value(s) indicated by the response options, separated by semicolons if applicable.
 #'
 #' @seealso process_responses
 #' @export
@@ -189,4 +185,60 @@ map_response <- function(response, reference, lookup_table) {
   lookup_table[item_row, option_numbers + 2] %>%
     unlist() %>%
     paste(collapse = "; ")
+}
+
+#' Ensure that a data frame has the required columns or signal with a message
+#'
+#' @param data The [`data.frame`] to check.
+#' @param required_columns A character vector of columns to ensure.
+#' @param signal The method used to signal if any of the columns are missing (e.g. [`abort`]).
+#' @param message_prefix A string to prepend to the message.
+#'
+#' @return A logical indicating if all the columns were present (`TRUE`) or not (`FALSE`).
+#' @keywords internal
+ensure_columns <- function(data, required_columns, signal, message_prefix = "") {
+  missing_required_cols <- !required_columns %in% names(data)
+  if (any(missing_required_cols)) {
+    signal(sprintf(
+      "%sResponse table missing required %s: %s",
+      message_prefix,
+      ngettext(sum(missing_required_cols), "column", "columns"),
+      paste0(required_columns[missing_required_cols], collapse = ", ")
+    ))
+  }
+
+  invisible(!any(missing_required_cols))
+}
+
+#' Split a responses table into semantically distinct parts.
+#'
+#' The resulting responses table can be quite large and is filled with many different types of
+#' responses. Pass the responses table to `split_responses()` to break the data into three distinct
+#' components: pre- and post-course surveys, end-of-chapter quizzes, and in-text questions.
+#'
+#' @param responses A responses data frame (processed or not) from a CourseKata class.
+#'
+#' @return A list of [`tibble`] objects with three elements:
+#'   1. `surveys`, for all responses from the course pre- and post-course surveys;
+#'   2. `quizzes`, for all responses from practice quizzes in the course; and
+#'   3. `in_text`, for all other items that appear in the textbook.
+#'
+#' @export
+split_responses <- function(responses) {
+  ensure_columns(responses, "item_id", stop, "Cannot split responses. ")
+  surveys <- survey_item_map(responses)
+  quizzes <- quiz_item_map(responses)
+  groups <- ifelse(surveys, "surveys", ifelse(quizzes, "quizzes", "in_text"))
+  split(tibble::as_tibble(responses), groups)
+}
+
+
+survey_item_map <- function(responses) {
+  item_map_lower <- stringr::str_to_lower(codebook[["item_id"]])
+  stringr::str_to_lower(responses[["item_id"]]) %in% item_map_lower
+}
+
+
+quiz_item_map <- function(responses) {
+  stringr::str_detect(responses[["item_id"]], ".*_Practice_Quiz.*")
 }

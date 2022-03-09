@@ -25,7 +25,7 @@ types:
 \itemize{
 \item \strong{integer}: \code{attempt}, \code{lrn_question_position}
 \item \strong{number}: \code{points_possible}, \code{points_earned}
-\item \strong{datetime}: \code{dt_submitted}, \code{lrn_dt_started}, \code{lrn_dt_saved}
+\item \strong{date-time}: \code{dt_submitted}, \code{lrn_dt_started}, \code{lrn_dt_saved}
 \item \strong{list}: \code{lrn_response_json}
 \item \strong{character}: all other columns not listed above
 }
