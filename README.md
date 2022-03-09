@@ -28,7 +28,7 @@ completed courses.
 
 ## Installation
 
-Download the package directly from this repository using devtools:
+Download the package directly from this repository using `devtools`:
 
 ``` r
 library(devtools)
@@ -66,16 +66,16 @@ process_data("path/to/downloaded/data")
 ```
 
 When you run this function it will load all of the data and create six
-data frames (actually [tibbles](https://tibble.tidyverse.org/), but they
-work pretty much the same). These are the names of the data frames that
-are created:
+data frames (actually [`tibble`s](https://tibble.tidyverse.org/), but
+they work pretty much the same). These are the names of the data frames
+that are created:
 
-  - `classes`
-  - `responses`
-  - `items`
-  - `tags`
-  - `media_views`
-  - `page_views`
+-   `classes`
+-   `responses`
+-   `items`
+-   `tags`
+-   `media_views`
+-   `page_views`
 
 If there is already an R object with one of these names, you will be
 given the opportunity to abort the processing or overwrite the existing
@@ -112,7 +112,7 @@ parts: the surveys at the beginning and end of the course, the practice
 quizzes at the end of each chapter, and the rest of the items in the
 text. If you would like to split the responses like this, there is a
 handy `split_responses()` function that will return a list of three
-tibbles:
+tables:
 
 ``` r
 parts <- split_responses(responses)
@@ -127,12 +127,12 @@ If you would instead like to process only part of the data, you can use
 the helpful sub-process functions that exist for each of the file types
 in the data download:
 
-  - `process_classes()`
-  - `process_responses()`
-  - `process_items()`
-  - `process_tags()`
-  - `process_media_views()`
-  - `process_page_views()`
+-   `process_classes()`
+-   `process_responses()`
+-   `process_items()`
+-   `process_tags()`
+-   `process_media_views()`
+-   `process_page_views()`
 
 As with `process_data()`, each of these functions will accept the path
 to a CourseKata data download zip file or the directory of the extracted
@@ -151,9 +151,9 @@ The classes data file contains information about each class in the data
 download. However, the other files are specific to each class included
 in the download. If you want to extract a specific class, you can
 specify the `class_id`, which should correspond to the name of the
-class’s folder in the `classes` folder of the download. (See more
-about the structure of the data download and what is in each file in the
-[Data Structure page in the
+class’s folder in the `classes` folder of the download. (See more about
+the structure of the data download and what is in each file in the [Data
+Structure page in the
 Wiki](https://github.com/UCLATALL/CourseKataData/wiki/Data-Structure).)
 
 ``` r
@@ -206,7 +206,7 @@ using the converter:
 
 ``` r
 convert_lists(tbl_with_lists)
-#> # A tibble: 2 x 1
+#> # A tibble: 2 × 1
 #>   x                            
 #>   <chr>                        
 #> 1 [[[1],[2],[3]],[[4],[5],[6]]]
@@ -232,11 +232,7 @@ run in any order. If you alter the response data and a function doesn’t
 know how to handle it any more, it will tell you what is missing or
 needed.
 
-## Funding Acknowledgment
-
-[CourseKata.org](https://coursekata.org) is a project of the UCLA Psychology Department’s [Teaching and Learning Lab](https://uclatall.com). It is supported in part by a grant from the Chan Zuckerberg Initiative DAF, an advised fund of Silicon Valley Community Foundation.
-
-## Contributing
+# Contributing
 
 If you see an issue, problem, or improvement that you think we should
 know about, or you think would fit with this package, please let us know
@@ -244,7 +240,7 @@ on our [issues page](https://github.com/UCLATALL/CourseKataData/issues).
 Alternatively, if you are up for a little coding of your own, submit a
 pull request:
 
-1.  Fork it\!
+1.  Fork it!
 2.  Create your feature branch: `git checkout -b my-new-feature`
 3.  Commit your changes: `git commit -am 'Add some feature'`
 4.  Push to the branch: `git push origin my-new-feature`

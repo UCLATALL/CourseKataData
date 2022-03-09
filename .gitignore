@@ -1,1 +1,3 @@
 .Rproj.user
+tests/testthat/data/unzipped/
+.DS_Store

@@ -2,44 +2,53 @@
 % Please edit documentation in R/load_data.R
 \name{load_data}
 \alias{load_data}
-\title{Load file(s) from a directory, zipped directory, or file path.}
+\title{Load CourseKata data from a directory, zipped directory, file path(s), or memory}
 \usage{
 load_data(object, regexp = ".*", class_id = NULL)
 }
 \arguments{
-\item{object}{The object to process the data from. This can be one of a
-variety of options:
+\item{object}{The object to process the data from. This can be one of a variety of options:
 \itemize{
-\item the path to a CourseKata data download zip file
-\item the path to an extracted data download directory
-\item the path to a specific CSV file (e.g. \code{classes.csv})
-\item the \code{data.frame} loaded from a CSV file (useful for writing unit tests)
+\item the path(s) to a CourseKata data download zip file or the directory extracted from that zip
+\item the path(s) to a specific CSV file (e.g. \code{classes.csv})
+\item a \code{\link{data.frame}}
 }}
 
-\item{regexp}{If \code{object} is a directory or zipped directory, a
-\code{\link{regex}} pattern indicating which file names to search for. The
-default value \code{'.*'} matches all files.}
+\item{regexp}{If \code{object} is a directory or zipped directory, a \code{\link{regex}} pattern indicating
+which file names to search for. The default value \code{'.*'} matches all files.}
 
-\item{class_id}{(Optional) A character vector of the IDs of specific classes
-you want to extract data for. These values should correspond to the names
-of the directories where the desired CSV files can be found in the original
-data download.}
+\item{class_id}{(Optional) A character vector of the IDs of specific classes you want to extract
+data for. These values should correspond to the names of the directories where the desired CSV
+files can be found in the original data download.}
 }
 \value{
-The resulting data frame will always be returned as a
-\code{\link{tibble}} with all factor variables converted to character. If
-the \code{object} is a \code{data.frame} it will still be converted to a \code{tibble}. If
-\code{object} is a path of some type, the files at the given location are
-filtered against \code{regexp} and \code{class_id}, and then read in. As the files
-are read, the rows of each table are merged int a single \code{tibble}.
+When a file path (or vector of file paths) is given, the files are read in and merged into a
+single table. Behind the scenes, we use \code{data.table} to process the data because it is very
+fast. However, the \code{data.table} interface is often unintuitive, so we convert the output to a
+\code{\link{tibble}}, which is just a prettier version of a \code{\link{data.frame}}.
+
+When a directory or zip file is passed, the \code{regexp} argument is required to determine which
+files you want from that directory. In general, you can keep this simple as the CourseKata data
+directories are structured simply and consistently. Something like "responses" should reliably
+find the "responses.csv" files. If you are having troubles (perhaps the instructor included
+supplementary files called "student_responses_and_comments.csv") you can construct a more
+specific pattern (see \code{\link{regex}}). The matched files are read in just as if you had passed their
+specific paths to the function.
+
+Sometimes it is useful to only extract data related to a specific class. To do this, you can
+use the \code{class_id} argument. If you include the ID of the class you want (you can get this from
+"classes.csv"), the \code{regexp} argument will be modified such that it only matches files from
+that class. For this reason, it isn't recommended to use the \code{class_id} in your \code{regexp} \emph{and}
+use the \code{class_id} argument.
 }
 \description{
-Load file(s) from a directory, zipped directory, or file path.
+This function is useful for loading CourseKata files from various sources. As a general purpose
+function, it has a few different parameters to work with. The most common usage will likely be
+selecting specific types of files to load from a CourseKata download. To do this, pass in a path
+(or a vector of paths) that points to a data download, and additionally use the \code{regexp} argument
+to specify what kind of file you want (e.g. "responses"). The function will then load in all of
+the "responses.csv" files it files at the locations you specified. You can also directly pass in
+file names instead of the directory/pattern combination. Finally, you can optionally specify a
+\code{class_id} if you know it.
 }
-\section{TODO}{
- It might be useful to vectorize on all args not just \code{object}.
-For \code{class_id} this would mean allowing a character vector (non-vectorized
-method) or a list of character vectors (vectorizing on the list). This
-seems better accomplished using something like \code{purrr} though.
-}
-
+\keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_responses.R
 \name{map_response}
 \alias{map_response}
-\title{Map a response array to its values in a lookup table.}
+\title{Map a response array to its values in a look-up table.}
 \usage{
 map_response(response, reference, lookup_table)
 }
@@ -11,19 +11,17 @@ map_response(response, reference, lookup_table)
 
 \item{reference}{A reference that corresponds to a \code{lrn_question_reference}.}
 
-\item{lookup_table}{A lookup table with a column \code{lrn_question_reference},
-and a column for each possible response option.}
+\item{lookup_table}{A lookup table with a column \code{lrn_question_reference}, and a column for each
+possible response option.}
 }
 \value{
-The value(s) indicated by the response options, separated by
-semicolons if applicable.
+The value(s) indicated by the response options, separated by semicolons if applicable.
 }
 \description{
-If you are using this function you very likely understand why you need to use
-it and can figure out what it does. It it is more likely that you want the
-more comprehensive function \code{\link{process_responses}}. That said, give
-it a response, a question reference, and a lookup table, and it will give you
-back the value from the lookup table that corresponse to the response.
+If you are using this function you very likely understand why you need to use it and can figure
+out what it does. It it is more likely that you want the more comprehensive function
+\code{\link{process_responses}}. That said, give it a response, a question reference, and a look-up table,
+and it will give you back the value from the look-up table that corresponds to the response.
 }
 \seealso{
 process_responses

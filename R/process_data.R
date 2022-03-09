@@ -1,37 +1,31 @@
 #' Process the data from a CourseKata data download.
 #'
-#' This function loads and processes data from a CourseKata end-of-class
-#' downloads. It functions by passing the path to each of the processing
-#' functions in this package. The output data frames are all created in the
-#' user's active environment as `classes`, `responses`, `items`, `page_views`,
-#' `media_views`, and `tags`. If any of the variables already exist, the user is
-#' prompted to either allow overwriting or abort the process (if not being run
-#' interactively, a message is emitted noting that the variables were
-#' overwritten).
+#' This function loads and processes data from a CourseKata end-of-class downloads. It functions by
+#' passing the path to each of the processing functions in this package. The output data frames are
+#' all created in the user's active environment as `classes`, `responses`, `items`, `page_views`,
+#' `media_views`, and `tags`. If any of the variables already exist, the user is prompted to either
+#' allow overwriting or abort the process (if not being run interactively, a message is emitted
+#' noting that the variables were overwritten).
 #'
-#' @param path The path to a CourseKata data download zip file or the path to an
-#'   extracted data download directory.
-#' @param time_zone The time zone to use when parsing date-time objects
-#'   (defaults to 'UTC'; see \code{\link{timezones}}).
-#' @param split_responses If `TRUE`, split the responses out into three tables
-#'   (`surveys`, `quizzes`, `in_text`) via \code{\link{split_responses}}.
-#' @param env The environment to create the variables in (defaults to the global
-#'   environment). In most cases, the function will be used interactively and
-#'   you will want to create the variables in the global environment, so that is
-#'   the default behavior. In testing or programatic applications it is useful
-#'   to control where the variables are created, so an environment can be passed
-#'   to capture them.
+#' @inheritParams process_auxiliary
+#' @param path The path to a CourseKata data download zip file or the path to an extracted data
+#'   download directory.
+#' @param split_responses If `TRUE`, split the responses out into three tables (`surveys`,
+#'   `quizzes`, `in_text`) via [`split_responses`].
+#' @param env The environment to create the variables in (defaults to the global environment). In
+#'   most cases, the function will be used interactively and you will want to create the variables
+#'   in the global environment, so that is the default behavior. In testing or programmatic
+#'   applications it is useful to control where the variables are created, so an environment can be
+#'   passed to capture them.
 #'
-#' @return This function returns `TRUE` if it completes successfully, and
-#'   `FALSE` if it is aborted.
+#' @return This function returns `TRUE` if it completes successfully, and `FALSE` if it is aborted.
 #'
 #' @export
-process_data <- function(
-  path,
-  time_zone = 'UTC',
-  split_responses = FALSE,
-  env = rlang::global_env()
-) {
+process_data <- function(path,
+                         time_zone = "UTC",
+                         split_responses = FALSE,
+                         convert_json = FALSE,
+                         env = rlang::global_env()) {
   tbls <- c(
     if (split_responses) c("quizzes", "in_text", "surveys") else "responses",
     "classes", "page_views", "media_views", "items", "tags"
@@ -65,11 +59,11 @@ process_data <- function(
   rlang::env_bind(env, tags = process_tags(path))
 
   if (split_responses) {
-    responses = split_responses(env$responses)
-    rlang::env_unbind(env, 'responses')
-    rlang::env_bind(env, surveys = responses[['surveys']])
-    rlang::env_bind(env, quizzes = responses[['quizzes']])
-    rlang::env_bind(env, in_text = responses[['in_text']])
+    responses <- split_responses(env$responses)
+    rlang::env_unbind(env, "responses")
+    rlang::env_bind(env, surveys = responses[["surveys"]])
+    rlang::env_bind(env, quizzes = responses[["quizzes"]])
+    rlang::env_bind(env, in_text = responses[["in_text"]])
   }
 
   var_string <- paste(tbls, collapse = ", ")

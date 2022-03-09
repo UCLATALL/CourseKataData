@@ -8,37 +8,37 @@ process_data(
   path,
   time_zone = "UTC",
   split_responses = FALSE,
+  convert_json = FALSE,
   env = rlang::global_env()
 )
 }
 \arguments{
-\item{path}{The path to a CourseKata data download zip file or the path to an
-extracted data download directory.}
+\item{path}{The path to a CourseKata data download zip file or the path to an extracted data
+download directory.}
 
-\item{time_zone}{The time zone to use when parsing date-time objects
-(defaults to 'UTC'; see \code{\link{timezones}}).}
+\item{time_zone}{The time zone to use when parsing date-time objects (see \code{\link{timezones}}).}
 
-\item{split_responses}{If \code{TRUE}, split the responses out into three tables
-(\code{surveys}, \code{quizzes}, \code{in_text}) via \code{\link{split_responses}}.}
+\item{split_responses}{If \code{TRUE}, split the responses out into three tables (\code{surveys},
+\code{quizzes}, \code{in_text}) via \code{\link{split_responses}}.}
 
-\item{env}{The environment to create the variables in (defaults to the global
-environment). In most cases, the function will be used interactively and
-you will want to create the variables in the global environment, so that is
-the default behavior. In testing or programatic applications it is useful
-to control where the variables are created, so an environment can be passed
-to capture them.}
+\item{convert_json}{For speed of processing, columns containing JSON are just read in as strings.
+If you are going to use these data, it may be useful to convert them to lists by specifying
+this argument as \code{TRUE}.}
+
+\item{env}{The environment to create the variables in (defaults to the global environment). In
+most cases, the function will be used interactively and you will want to create the variables
+in the global environment, so that is the default behavior. In testing or programmatic
+applications it is useful to control where the variables are created, so an environment can be
+passed to capture them.}
 }
 \value{
-This function returns \code{TRUE} if it completes successfully, and
-\code{FALSE} if it is aborted.
+This function returns \code{TRUE} if it completes successfully, and \code{FALSE} if it is aborted.
 }
 \description{
-This function loads and processes data from a CourseKata end-of-class
-downloads. It functions by passing the path to each of the processing
-functions in this package. The output data frames are all created in the
-user's active environment as \code{classes}, \code{responses}, \code{items}, \code{page_views},
-\code{media_views}, and \code{tags}. If any of the variables already exist, the user is
-prompted to either allow overwriting or abort the process (if not being run
-interactively, a message is emitted noting that the variables were
-overwritten).
+This function loads and processes data from a CourseKata end-of-class downloads. It functions by
+passing the path to each of the processing functions in this package. The output data frames are
+all created in the user's active environment as \code{classes}, \code{responses}, \code{items}, \code{page_views},
+\code{media_views}, and \code{tags}. If any of the variables already exist, the user is prompted to either
+allow overwriting or abort the process (if not being run interactively, a message is emitted
+noting that the variables were overwritten).
 }
