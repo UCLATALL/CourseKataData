@@ -25,20 +25,23 @@ download directory.}
 If you are going to use these data, it may be useful to convert them to lists by specifying
 this argument as \code{TRUE}.}
 
-\item{env}{The environment to create the variables in (defaults to the global environment). In
+\item{env}{The \link{environment} to create the variables in (defaults to the global environment). In
 most cases, the function will be used interactively and you will want to create the variables
 in the global environment, so that is the default behavior. In testing or programmatic
 applications it is useful to control where the variables are created, so an environment can be
-passed to capture them.}
+passed to capture them, e.g. by setting \code{env = rlang::env()}.}
 }
 \value{
-This function returns \code{TRUE} if it completes successfully, and \code{FALSE} if it is aborted.
+This function returns the environment that the data frames were created in. Usually you
+can ignore this return value and just use the variables as you need. If you are an advanced user
+and you supplied an environment to \code{env}, that environment is returned.
 }
 \description{
-This function loads and processes data from a CourseKata end-of-class downloads. It functions by
-passing the path to each of the processing functions in this package. The output data frames are
-all created in the user's active environment as \code{classes}, \code{responses}, \code{items}, \code{page_views},
-\code{media_views}, and \code{tags}. If any of the variables already exist, the user is prompted to either
-allow overwriting or abort the process (if not being run interactively, a message is emitted
-noting that the variables were overwritten).
+This function loads and processes data from a CourseKata end-of-class downloads. To use it, just
+point it to the zip file or folder that you downloaded from CourseKata and run it. It will load
+all of the data (showing progress bars along the way) and output it into several data frames:
+\code{classes}, \code{responses}, \code{items}, \code{page_views}, \code{media_views}, and \code{tags}. If any of those
+variables already exist, you will be prompted to either allow overwriting or abort the process
+(if not being run interactively, a message is emitted noting that the variables were
+overwritten).
 }

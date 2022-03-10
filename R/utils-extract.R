@@ -28,11 +28,16 @@ dir_to_files <- function(dir_path, regexp = ".*") {
 extract_to_temp <- function(path, regexp = ".*") {
   purrr::map2_chr(path, regexp, function(zip_file, regexp) {
     zip_list <- utils::unzip(zip_file, list = TRUE)[["Name"]]
-    targets <- stringr::str_subset(zip_list, regexp)
+    targets <- stringi::stri_subset_regex(zip_list, regexp, omit_na = TRUE)
 
     # remove possible bad directory with : in file names
-    safe_targets <- stringr::str_split_fixed(targets, "/", 2)[, 2]
-    safe_directories <- fs::path_dir(safe_targets)
+    safe_targets <- stringi::stri_split_fixed(targets, "/", n = 2) %>%
+      stringi::stri_list2matrix(byrow = TRUE)
+    safe_directories <- if (ncol(safe_targets) == 1) {
+      fs::path_dir(safe_targets[, 1])
+    } else {
+      fs::path_dir(safe_targets[, 2])
+    }
 
     # extract to a temporary directory
     temp_dir_name <- fs::path_ext_remove(fs::path_file(zip_file))

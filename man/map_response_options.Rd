@@ -10,7 +10,7 @@ map_response_options(responses)
 \item{responses}{A CourseKata responses table (e.g. from responses.csv).}
 }
 \value{
-A responses table as a \code{\link{tibble}} with the lookup table added as the \code{option_value_table}
+A responses table as a \code{\link{tibble}} with the look-up table added as the \code{option_value_table}
 attribute and the \code{response} column altered by mapping the responses using the table.
 }
 \description{

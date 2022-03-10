@@ -105,7 +105,6 @@ make_test_zip <- function(dir_in_temp, files_data, files_n, files_make_in,
 test_that('data can be loaded from a vector of files to a tibble', {
   files <- class_dir(c("responses.csv", "responses.csv"))
   actual <- load_data(files)
-  expect_s3_class(actual, "tbl_df")
   expect_identical(ncol(actual), 41L)
   expect_identical(nrow(actual), 53L * 2L)
 })

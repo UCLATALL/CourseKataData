@@ -4,7 +4,7 @@
 \alias{load_data}
 \title{Load CourseKata data from a directory, zipped directory, file path(s), or memory}
 \usage{
-load_data(object, regexp = ".*", class_id = NULL)
+load_data(object, regexp = ".*", class_id = NULL, progress_message = NULL)
 }
 \arguments{
 \item{object}{The object to process the data from. This can be one of a variety of options:
@@ -20,12 +20,13 @@ which file names to search for. The default value \code{'.*'} matches all files.
 \item{class_id}{(Optional) A character vector of the IDs of specific classes you want to extract
 data for. These values should correspond to the names of the directories where the desired CSV
 files can be found in the original data download.}
+
+\item{progress_message}{The message to show above the progress bar.}
 }
 \value{
 When a file path (or vector of file paths) is given, the files are read in and merged into a
 single table. Behind the scenes, we use \code{data.table} to process the data because it is very
-fast. However, the \code{data.table} interface is often unintuitive, so we convert the output to a
-\code{\link{tibble}}, which is just a prettier version of a \code{\link{data.frame}}.
+fast. You can use \code{data.table}s more or less like \code{data.frame}s.
 
 When a directory or zip file is passed, the \code{regexp} argument is required to determine which
 files you want from that directory. In general, you can keep this simple as the CourseKata data

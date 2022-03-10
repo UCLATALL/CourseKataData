@@ -2,7 +2,6 @@
 
 test_that("loaded class data is in a tidy table with appropriate types", {
   classes <- process_classes(data_dir("unzipped/classes.csv"))
-  expect_s3_class(classes, "tbl_df")
   expect_vector(classes$class_id, character(), 2)
   expect_vector(classes$course_name, character(), 2)
   expect_vector(classes$release, character(), 2)
@@ -19,7 +18,7 @@ test_that("loaded class data is in a tidy table with appropriate types", {
 test_that("(page_views) datetime columns are appropriately typed", {
   # this mock should have all expected datetime columns
   mock_response <- data.frame(
-    dt_accessed = as.character(Sys.Date())
+    dt_accessed = as.character(Sys.time())
   )
 
   actual <- process_page_views(mock_response)
@@ -28,7 +27,7 @@ test_that("(page_views) datetime columns are appropriately typed", {
 
 test_that("(page_views) time zone can be specified for datetime columns", {
   mock_response <- data.frame(
-    dt_accessed = as.character(Sys.Date())
+    dt_accessed = as.character(Sys.time())
   )
 
   actual <- process_page_views(mock_response, time_zone = Sys.timezone())
@@ -52,7 +51,7 @@ test_that("(media_views) list columns are appropriately typed if requested", {
 test_that("(media_views) datetime columns are appropriately typed", {
   # this mock should have all expected datetime columns
   mock_response <- data.frame(
-    dt_started = as.character(Sys.Date())
+    dt_started = as.character(Sys.time())
   )
 
   actual <- process_media_views(mock_response)
@@ -61,7 +60,7 @@ test_that("(media_views) datetime columns are appropriately typed", {
 
 test_that("(media_views) time zone can be specified for datetime columns", {
   mock_response <- data.frame(
-    dt_started = as.character(Sys.Date())
+    dt_started = as.character(Sys.time())
   )
 
   actual <- process_media_views(mock_response, time_zone = Sys.timezone())

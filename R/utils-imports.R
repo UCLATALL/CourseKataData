@@ -16,4 +16,5 @@ NULL
 #' @import rlang
 #' @import vctrs
 #' @import fs
+#' @import fastmatch
 NULL

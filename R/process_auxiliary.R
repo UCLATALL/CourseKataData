@@ -26,7 +26,8 @@ NULL
 #' @rdname process_auxiliary
 #' @export
 process_classes <- function(object, class_id = NULL, convert_json = FALSE) {
-  object <- load_data(object, "classes[.]csv$", class_id = class_id)
+  msg <- "Processing classes..."
+  object <- load_data(object, "classes[.]csv$", class_id = class_id, progress_message = msg)
 
   if (convert_json) {
     object <- object %>% purrr::modify_at("setup_yaml", safe_convert_json)
@@ -39,7 +40,8 @@ process_classes <- function(object, class_id = NULL, convert_json = FALSE) {
 #' @export
 process_page_views <- function(object, time_zone = "UTC", class_id = NULL) {
   rlang::arg_match(time_zone, OlsonNames())
-  load_data(object, "page_views[.]csv$", class_id = class_id) %>%
+  msg <- "Processing page views..."
+  load_data(object, "page_views[.]csv$", class_id = class_id, progress_message = msg) %>%
     purrr::modify_at("dt_accessed", parse_datetime, time_zone = time_zone)
 }
 
@@ -52,12 +54,13 @@ process_media_views <- function(object, time_zone = "UTC", class_id = NULL, conv
   doubles <- c("proportion_video", "proportion_time")
 
   # parsers located at process_function_helpers
-  out <- load_data(object, "media_views[.]csv$", class_id = class_id) %>%
+  msg <- "Processing media views..."
+  out <- load_data(object, "media_views[.]csv$", class_id = class_id, progress_message = msg) %>%
     purrr::modify_at(datetimes, parse_datetime, time_zone = time_zone) %>%
     purrr::modify_at(doubles, parse_double)
 
   if (convert_json) {
-    out <- out %>% purrr::modify_at("log_json", safe_convert_json)
+    out <- purrr::modify_at(out, "log_json", safe_convert_json)
   }
 
   out
@@ -66,11 +69,12 @@ process_media_views <- function(object, time_zone = "UTC", class_id = NULL, conv
 #' @rdname process_auxiliary
 #' @export
 process_items <- function(object, class_id = NULL, convert_json = FALSE) {
-  out <- load_data(object, "items[.]csv$", class_id = class_id) %>%
+  msg <- "Processing item info..."
+  out <- load_data(object, "items[.]csv$", class_id = class_id, progress_message = msg) %>%
     purrr::modify_at("lrn_question_position", parse_integer)
 
   if (convert_json) {
-    out <- out %>% purrr::modify_at("lrn_question_data", safe_convert_json)
+    out <- purrr::modify_at(out, "lrn_question_data", safe_convert_json)
   }
 
   out
@@ -79,5 +83,6 @@ process_items <- function(object, class_id = NULL, convert_json = FALSE) {
 #' @rdname process_auxiliary
 #' @export
 process_tags <- function(object, class_id = NULL) {
-  load_data(object, "tags[.]csv$", class_id = class_id)
+  msg <- "Processing tags..."
+  load_data(object, "tags[.]csv$", class_id = class_id, progress_message = msg)
 }

@@ -13,7 +13,7 @@
 #' @keywords internal
 #' @rdname number_parsers
 strip_alpha <- function(x) {
-  stringr::str_remove_all(x, "[^0-9.-]")
+  stringi::stri_replace_all_regex(x, "[^0-9.-]", "")
 }
 
 #' @keywords internal
@@ -61,6 +61,6 @@ safe_convert_json <- function(json_col) {
 #' @return A vector of date-times, where the date-time has been converted to the desired time-zone.
 #' @keywords internal
 parse_datetime <- function(x, time_zone = "UTC") {
-  dt <- as.POSIXct(x, format = "%Y-%m-%d %H:%M:%OS", tz = "UTC")
-  structure(dt, tzone = time_zone)
+  dt <- lubridate::ymd_hms(x, tz = "UTC")
+  lubridate::with_tz(dt, time_zone)
 }

@@ -19,18 +19,21 @@ Encoding: UTF-8
 Depends: 
     R (>= 3.5)
 Imports: 
-    magrittr,
+    data.table,
+    fastmatch,
     fs,
-    rlang,
-    vctrs,
     jsonlite,
-    stringr,
-    tibble,
+    lubridate,
+    magrittr,
+    progress,
     purrr,
-    data.table
+    rlang,
+    stringi,
+    tibble,
+    vctrs
 Suggests: 
-    testthat (>= 2.1.0),
     covr,
+    testthat (>= 2.1.0),
     withr,
     zip
 LazyData: true

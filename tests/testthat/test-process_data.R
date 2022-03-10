@@ -19,7 +19,8 @@ test_that("it will load all of the data and create six data frames", {
 })
 
 test_that("it can load from a zip file and create six data frames", {
-  process_data(zip_file, env = test_env) %>% suppressMessages()
+  process_data(zip_file, env = test_env) %>%
+    suppressMessages()
 
   rlang::with_env(test_env, {
     expect_identical(classes, process_classes(zip_file))
