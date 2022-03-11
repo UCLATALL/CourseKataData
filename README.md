@@ -13,12 +13,12 @@ coverage](https://codecov.io/gh/UCLATALL/CourseKataData/branch/master/graph/badg
 status](https://www.r-pkg.org/badges/version/CourseKataData)](https://CRAN.R-project.org/package=CourseKataData)
 <!-- badges: end -->
 
-This is the **source code** for CourseKataData. If you are trying to
-learn more about the contents of the actual data, how to use this
-package, or how other researchers are using this package, **head to the
-[Wiki](https://github.com/UCLATALL/CourseKataData/wiki).**
+This is the **source code** and an introduction to the `CourseKataData`
+package. If you are trying to learn more about the contents of the
+actual data, or how other researchers are using this package, **head to
+the [Wiki](https://github.com/UCLATALL/CourseKataData/wiki).**
 
-The goal of CourseKataData is to help researchers working with
+The goal of `CourseKataData` is to help researchers working with
 CourseKata courses on data science, statistics, and modeling. The data
 downloaded from [CourseKata](https://www.coursekata.org) can be useful
 in the more-or-less “raw” form that it comes in, but you will usually
@@ -37,7 +37,7 @@ install_github("UCLATALL/CourseKataData")
 
 ## Usage
 
-This section details the usage of the functions in the CourseKataData
+This section details the usage of the functions in the `CourseKataData`
 package. If you would like to read more about the actual structure of
 the data downloaded from CourseKata, check out the associated [Data
 Structure page in the
@@ -65,9 +65,9 @@ to the latter path:
 process_data("path/to/downloaded/data")
 ```
 
-When you run this function it will load all of the data and create six
-data frames (actually [`tibble`s](https://tibble.tidyverse.org/), but
-they work pretty much the same). These are the names of the data frames
+When you run `process_data()`, it will load all of the data and create
+six data frames (actually [`tibble`s](https://tibble.tidyverse.org/),
+but they work pretty much the same). These are the names of the tables
 that are created:
 
 -   `classes`
@@ -79,40 +79,64 @@ that are created:
 
 If there is already an R object with one of these names, you will be
 given the opportunity to abort the processing or overwrite the existing
-object.
+object. Advanced users can check the R documentation (`?process_data`)
+to learn how to create these variables in a different environment.
 
 ### Automatically Merge Multiple Downloads
 
-If you have downloaded multiple data download zip files from CourseKata,
-don’t worry, this package takes care of merging the files for you. To
-load multiple data downloads into R, specify a vector of zip files or
-directories to load:
+If you have downloaded multiple data download bundles from CourseKata,
+don’t worry, this package takes care of merging the files for you. You
+can specify a vector of zip files or directories to load:
 
 ``` r
-zip_paths <- c("path/to/first/zip", "path/to/second/zip", "path/to/a/directory")
-process_data(zip_paths)
+paths <- c("path/to/first/zip", "path/to/second/zip", "path/to/a/directory")
+process_data(paths)
 ```
+
+Or, you can put all of the data into a common directory and specify that
+directory:
+
+``` r
+# assuming you put all of the downloaded bundles in the same directory
+process_data("path/to/directory/containing/bundles")
+```
+
+**Note**: this process relies on the fact that the data bundles you
+download have a consistent format. It may get confused if you reorganize
+things too much within the downloaded bundles. (See more about the
+structure of the data download and what is in each file in the [Data
+Structure page in the
+Wiki](https://github.com/UCLATALL/CourseKataData/wiki/Data-Structure).)
 
 #### Time Zones
 
 By default the data is parsed using the “UTC” time zone. If you would
 like to convert the date time data in each table to a different time
-zone you can specify it. In this example, your computer system’s time
-zone will be used:
+zone you can specify it. Here is an example with Los Angeles, and
+another showing how to let your computer decide what time zone you are
+in:
 
 ``` r
+# specifically Los Angeles
+process_data("path/to/downloaded/data", time_zone = "America/Los_Angeles")
+
+# let the system figure it out for you
 process_data("path/to/downloaded/data", time_zone = Sys.timezone())
 ```
+
+If you are having trouble with this, see `?timezones` for more
+information.
 
 #### Splitting Responses
 
 By default, all of the responses in the course are included in the
 `responses` table. These responses can be semantically split into three
 parts: the surveys at the beginning and end of the course, the practice
-quizzes at the end of each chapter, and the rest of the items in the
-text. If you would like to split the responses like this, there is a
-handy `split_responses()` function that will return a list of three
-tables:
+quizzes at the end of each chapter (these are now called review
+questions, but this function still calls them quizzes because they used
+to be called that), and the rest of the items in the text. If you would
+like to split the responses like this, there is a handy
+`split_responses()` function that will return a list of three tables:
 
 ``` r
 parts <- split_responses(responses)
@@ -135,9 +159,9 @@ in the data download:
 -   `process_page_views()`
 
 As with `process_data()`, each of these functions will accept the path
-to a CourseKata data download zip file or the directory of the extracted
-zip file, or you can simply supply the name of the file that you want to
-process with the function.
+to a CourseKata data bundle zip file or the directory of an extracted
+zip file, a directory full of bundles, or you can simply supply the name
+of the file that you want to process with the function.
 
 ``` r
 # zip file
@@ -199,12 +223,11 @@ tbl_with_lists <- tibble::tibble(x = list(
 These columns need to be converted back to a format that can be written
 as a string if you want to export the data to CSV or a similar format
 that does not have clear rules for exporting lists. For convenience, the
-`convert_lists()` function is provided to help conversion, and the
-default CSV writer `utils::write.csv()` is masked with
-`CourseKataData::write.csv()` to use the converter. Here is an example
-using the converter:
+`convert_lists()` function is provided to help conversion, and we load a
+custom CSV writer to handle this for you:
 
 ``` r
+# if you just want to convert lists
 convert_lists(tbl_with_lists)
 #> # A tibble: 2 × 1
 #>   x                            
@@ -213,24 +236,16 @@ convert_lists(tbl_with_lists)
 #> 2 [[[7],[8],[9]]]
 ```
 
-### Into the Deep with Responses
-
-The responses take a significant amount of processing. If you would like
-to do this in parts (perhaps to inject your own processing at some point
-along the way), each of the finer processing functions are available.
-The following is equivalent to `process_responses()`:
+If you specifically want to export to CSV, we have included a function
+that can handle this for you. It automatically masks the standard
+`write.csv()` with one that will handle these list columns:
 
 ``` r
-read.csv("path/to/downloaded/data/classes/[class_id]/responses.csv") %>% 
-  convert_types_in_responses() %>%
-  ensure_data_in_responses() %>%
-  map_response_options()
+# make sure you have CourseKataData loaded
+library(CourseKataData)
+responses <- process_responses("path/to/some/data")
+write.csv(responses, "responses.csv")
 ```
-
-The part functions are purely functional, which means that they can be
-run in any order. If you alter the response data and a function doesn’t
-know how to handle it any more, it will tell you what is missing or
-needed.
 
 # Contributing
 
