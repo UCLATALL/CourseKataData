@@ -1,92 +1,90 @@
-#' Load file(s) from a directory, zipped directory, or file path.
+#' Load CourseKata data from a directory, zipped directory, file path(s), or memory
 #'
-#' @param object The object to process the data from. This can be one of a
-#'   variety of options:
-#'   - the path to a CourseKata data download zip file
-#'   - the path to an extracted data download directory
-#'   - the path to a specific CSV file (e.g. `classes.csv`)
-#'   - the `data.frame` loaded from a CSV file (useful for writing unit tests)
-#' @param regexp If `object` is a directory or zipped directory, a
-#'   \code{\link{regex}} pattern indicating which file names to search for. The
-#'   default value `'.*'` matches all files.
-#' @param class_id (Optional) A character vector of the IDs of specific classes
-#'   you want to extract data for. These values should correspond to the names
-#'   of the directories where the desired CSV files can be found in the original
-#'   data download.
+#' This function is useful for loading CourseKata files from various sources. As a general purpose
+#' function, it has a few different parameters to work with. The most common usage will likely be
+#' selecting specific types of files to load from a CourseKata download. To do this, pass in a path
+#' (or a vector of paths) that points to a data download, and additionally use the `regexp` argument
+#' to specify what kind of file you want (e.g. "responses"). The function will then load in all of
+#' the "responses.csv" files it files at the locations you specified. You can also directly pass in
+#' file names instead of the directory/pattern combination. Finally, you can optionally specify a
+#' `class_id` if you know it.
 #'
-#' @return The resulting data frame will always be returned as a
-#'   \code{\link{tibble}} with all factor variables converted to character. If
-#'   the `object` is a `data.frame` it will still be converted to a `tibble`. If
-#'   `object` is a path of some type, the files at the given location are
-#'   filtered against `regexp` and `class_id`, and then read in. As the files
-#'   are read, the rows of each table are merged int a single `tibble`.
+#' @param object The object to process the data from. This can be one of a variety of options:
+#'   - the path(s) to a CourseKata data download zip file or the directory extracted from that zip
+#'   - the path(s) to a specific CSV file (e.g. `classes.csv`)
+#'   - a [`data.frame`]
+#' @param regexp If `object` is a directory or zipped directory, a [`regex`] pattern indicating
+#'   which file names to search for. The default value `'.*'` matches all files.
+#' @param class_id (Optional) A character vector of the IDs of specific classes you want to extract
+#'   data for. These values should correspond to the names of the directories where the desired CSV
+#'   files can be found in the original data download.
+#' @param progress_message The message to show above the progress bar.
 #'
-#' @section TODO: It might be useful to vectorize on all args not just `object`.
-#'   For `class_id` this would mean allowing a character vector (non-vectorized
-#'   method) or a list of character vectors (vectorizing on the list). This
-#'   seems better accomplished using something like `purrr` though.
+#' @return
+#'   When a file path (or vector of file paths) is given, the files are read in and merged into a
+#'   single table. Behind the scenes, we use `data.table` to process the data because it is very
+#'   fast. You can use `data.table`s more or less like `data.frame`s.
 #'
-#' @export
-load_data <- function(object, regexp = '.*', class_id = NULL) {
-  stopifnot(is.data.frame(object) || is.character(object))
+#'   When a directory or zip file is passed, the `regexp` argument is required to determine which
+#'   files you want from that directory. In general, you can keep this simple as the CourseKata data
+#'   directories are structured simply and consistently. Something like "responses" should reliably
+#'   find the "responses.csv" files. If you are having troubles (perhaps the instructor included
+#'   supplementary files called "student_responses_and_comments.csv") you can construct a more
+#'   specific pattern (see [`regex`]). The matched files are read in just as if you had passed their
+#'   specific paths to the function.
+#'
+#'   Sometimes it is useful to only extract data related to a specific class. To do this, you can
+#'   use the `class_id` argument. If you include the ID of the class you want (you can get this from
+#'   "classes.csv"), the `regexp` argument will be modified such that it only matches files from
+#'   that class. For this reason, it isn't recommended to use the `class_id` in your `regexp` *and*
+#'   use the `class_id` argument.
+#'
+#' @keywords internal
+load_data <- function(object, regexp = '.*', class_id = NULL, progress_message = NULL) {
+  UseMethod("load_data", object)
+}
 
-  # add class ID to the regex pattern and start over
-  if (is.character(object) && !is.null(class_id)) {
+load_data.data.frame <- function(object, regexp = ".*", class_id = NULL, progress_message = NULL) {
+  # ignore progress message when converting a data frame
+  progress_message <- NULL
+  purrr::modify_if(object, is.factor, as.character)
+}
+
+load_data.character <- function(object, regexp = ".*", class_id = NULL, progress_message = NULL) {
+  # extract all zips and filter all directories down to a file list
+  object <- path_expand(object)
+
+  if (!is_null(class_id)) {
     cls_pattern <- ifelse(class_id == "", class_id, paste0(class_id, "/"))
-    new_regexp <- paste0(cls_pattern, regexp, collapse = "|")
-
-    return(load_data(object, new_regexp))
+    regexp <- paste0(cls_pattern, regexp, collapse = "|")
   }
 
-  if (is.character(object)) {
-    object <- fs::path_expand(object)
+  files_and_dirs <- purrr::map_if(object, is_zip_file, extract_to_temp, regexp = regexp)
+  lists_of_files <- purrr::map_if(files_and_dirs, fs::is_dir, dir_to_files, regexp = regexp)
+  files <- stringi::stri_subset_regex(purrr::flatten_chr(lists_of_files), regexp, omit_na = TRUE)
 
-    # predicate for map_if
-    is_zip_file <- function(path) {
-      fs::is_file(path) & fs::path_ext(path) == 'zip'
-    }
+  if (length(files) == 0) abort(c(
+    'No files were found matching the regexp/class_id combination given.\n',
+    sprintf('Combined regular expression: %s', regexp)
+  ))
 
-    # functional for map_if
-    # inner regexp is pulled from load_data args
-    extract_to_temp <- function(zip_file) {
-      zip_list <- utils::unzip(zip_file, list = TRUE)[["Name"]]
-      targets <- stringr::str_subset(zip_list, regexp)
+  # read in and combine files
+  progress_bar <- init_progress(progress_message, length(files))
 
-      # remove possible bad directory with : in filenames
-      safe_targets <- stringr::str_split_fixed(targets, "/", 2)[, 2]
-      safe_directories <- fs::path_dir(safe_targets)
-
-      # extract to a temporary directory
-      temp_dir_name <- fs::path_ext_remove(fs::path_file(zip_file))
-      temp_dir <- fs::dir_create(fs::path(tempdir(check = TRUE), temp_dir_name))
-      purrr::walk2(targets, safe_directories, function(file_name, directory) {
-        ex_dir <- fs::path(temp_dir, directory)
-        utils::unzip(zip_file, file_name, junkpaths = TRUE, exdir = ex_dir)
-      })
-
-      temp_dir
-    }
-
-    # functional for map_if
-    # inner regexp pulled from load_data args
-    dir_to_files <- function(dir_path) {
-      fs::dir_ls(dir_path, regexp = regexp, type = 'file', recurse = TRUE)
-    }
-
-    # extract all zips and filter all dirs down to a file list
-    files_and_dirs <- purrr::map_if(object, is_zip_file, extract_to_temp)
-    lists_of_files <- purrr::map_if(files_and_dirs, fs::is_dir, dir_to_files)
-    files <- stringr::str_subset(purrr::flatten_chr(lists_of_files), regexp)
-
-    if (length(files) == 0) rlang::abort(paste0(
-      'No files were found matching the regexp/class_id combination given.\n',
-      '  combined regular expression: ', regexp
-    ))
-
-    # read in and combine files
-    dfs <- purrr::map(files, utils::read.csv, stringsAsFactors = FALSE)
-    object <- purrr::reduce(dfs, vctrs::vec_c)
+  reader <- function(file) {
+    progress_bar$tick()
+    data.table::fread(
+      file = file,
+      stringsAsFactors = FALSE,
+      showProgress = FALSE,
+      colClasses = "character"
+    )
   }
 
-  purrr::modify_if(tibble::as_tibble(object), is.factor, as.character)
+  progress_bar$tick(0)
+  files %>%
+    purrr::map(reader) %>%
+    data.table::rbindlist(fill = TRUE) %>%
+    as.data.frame() %>%
+    structure(".internal.selfref" = NULL)
 }

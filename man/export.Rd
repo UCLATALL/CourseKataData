@@ -30,41 +30,34 @@ convert_lists(x, converter = jsonlite::toJSON, ...)
     names of \code{x} are to be written along with \code{x}, or a
     character vector of row names to be written.}
 
-\item{converter}{An function that takes a list and returns a string. By
-default, the \code{\link[jsonlite:fromJSON]{toJSON}} from the \code{jsonlite}
-package is included and used.}
+\item{converter}{An function that takes a list and returns a string. By default, it uses
+\code{\link[jsonlite:fromJSON]{jsonlite::toJSON}}.}
 
 \item{...}{Arguments passed on to the \code{converter} function.}
 }
 \value{
-The converted data frame (where lists are formatted as strings) is
-returned. This makes it easier to use this function in a pipe
-(\code{\link[magrittr:pipe]{\%>\%}}).
+The converted data frame (where lists are formatted as strings) is returned. This makes
+it easier to use this function in a pipe \code{\link{\%>\%}}).
 }
 \description{
-Processed data from the course often has one or more list-columns in it. A
-list-column is a column in a data frame where each of the rows (elements) in
-that column is a \code{list}. These columns have some ambiguity in how they should
-be written to file. As a sensible default, the function provides a mask for
-\code{\link[utils:write.table]{write.csv}} where the data is first passed
-through \code{convert_lists()}. See the details section for more information about
-the conversion process.
+Processed data from the course often has one or more list-columns in it. A list-column is a
+column in a data frame where each of the rows (elements) in that column is a \code{list}. These
+columns have some ambiguity in how they should be written to file. As a sensible default, the
+function provides a mask for \code{\link[utils:write.table]{utils::write.csv}} where the data is first passed through
+\code{\link{convert_lists}}. See the details section for more information about the conversion process.
 }
 \details{
-Data from CourseKata classes often has JSON (Javascript Object Notation) in
-some of the columns. Though it is called \emph{Javascript} object notation, this
-is a standard and common format for sending and receiving data because it has
-clear rules for representing various data structures. When this kind of data
-is read-in using one of the \verb{process_*()} functions like
-\code{\link{process_data}}, it is converted to a \code{list}, which is a more
-natural form of data in R. Unfortunately, when a data frame has a
-list-column, there is ambiguity in how to write that column to file. JSON is
-a sensible default because it does not lose any information in the conversion
-process, even in more complex cases.
+Data from CourseKata classes often has JSON (Javascript Object Notation) in some of the columns.
+Though it is called \emph{JavaScript} object notation, this is a standard and common format for
+sending and receiving data because it has clear rules for representing various data structures.
+When this kind of data is read-in using one of the \verb{process_*()} functions like \code{\link{process_data}},
+it is converted to a \code{list}, which is a more natural form of data in R. Unfortunately, when a
+data frame has a list-column, there is ambiguity in how to write that column to file. JSON is a
+sensible default because it does not lose any information in the conversion process, even in more
+complex cases.
 
-If you would like to write your own converted, the export functions here will
-let you specify one to use. An example of a custom converter and how to
-specify it are provided below.
+If you would like to write your own converted, the export functions here will let you specify one
+to use. An example of a custom converter and how to specify it are provided below.
 }
 \examples{
 
@@ -75,7 +68,7 @@ tbl_nested <- tibble::tibble(x = list(list(1, 2, 3), list(4, 5, 6)))
 convert_lists(tbl_nested)
 
 # custom converter that just comma-separates top-level values
-to_comma <- function(x) paste0(x, collapse = ',')
+to_comma <- function(x) paste0(x, collapse = ",")
 convert_lists(tbl_nested, to_comma)
 
 # an example of a more deeply nested structure being converted to JSON

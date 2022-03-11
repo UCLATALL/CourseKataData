@@ -9,10 +9,10 @@ mock_responses <- tibble::tibble(
 split <- split_responses(mock_responses)
 
 test_that("responses are split into named tibbles", {
-  expect_is(split, "list")
-  expect_is(split$surveys, "tbl_df")
-  expect_is(split$in_text, "tbl_df")
-  expect_is(split$quizzes, "tbl_df")
+  expect_vector(split, list())
+  expect_s3_class(split$surveys, "tbl_df")
+  expect_s3_class(split$in_text, "tbl_df")
+  expect_s3_class(split$quizzes, "tbl_df")
 })
 
 test_that("response tables missing required columns throw informative errors", {
@@ -23,23 +23,23 @@ test_that("response tables missing required columns throw informative errors", {
 })
 
 test_that("survey items end up in surveys", {
-  expect_identical(split$survey, mock_responses[1:3, ])
+  expect_identical(split$surveys, mock_responses[1:3, ], ignore_attr = TRUE)
 })
 
 test_that("practice quiz items end up in quizzes", {
-  expect_identical(split$quizzes, mock_responses[4:5, ])
+  expect_identical(split$quizzes, mock_responses[4:5, ], ignore_attr = TRUE)
 })
 
 test_that("all other items end up in in_text", {
-  expect_identical(split$in_text, mock_responses[6:8, ])
+  expect_identical(split$in_text, mock_responses[6:8, ], ignore_attr = TRUE)
 })
 
 test_that("all responses are accounted for", {
   rownames <- as.integer(rownames(mock_responses))
-  mock_responses[['rownames']] <- rownames
+  mock_responses[["rownames"]] <- rownames
   split <- split_responses(mock_responses)
   spliced <- purrr::reduce(split, rbind) %>%
-    .[match(rownames, .[['rownames']]), ]
+    .[match(rownames, .[["rownames"]]), ]
 
-  expect_identical(spliced, mock_responses)
+  expect_identical(spliced, mock_responses, ignore_attr = TRUE)
 })

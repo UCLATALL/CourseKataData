@@ -1,6 +1,6 @@
 Package: CourseKataData
 Title: Work With Data From CourseKata Data Science Classes
-Version: 0.0.4
+Version: 0.1.0
 Authors@R: c(
     person(given = "Adam",
            family = "Blake",
@@ -19,19 +19,24 @@ Encoding: UTF-8
 Depends: 
     R (>= 3.5)
 Imports: 
-    magrittr,
+    data.table,
+    fastmatch,
     fs,
-    rlang,
-    vctrs,
     jsonlite,
-    stringr,
+    lubridate,
+    magrittr,
+    progress,
+    purrr,
+    rlang,
+    stringi,
     tibble,
-    purrr
+    vctrs
 Suggests: 
-    testthat (>= 2.1.0),
     covr,
+    testthat (>= 2.1.0),
     withr,
     zip
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
+Config/testthat/edition: 3

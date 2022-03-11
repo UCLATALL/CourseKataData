@@ -17,14 +17,14 @@ get_codebook_for_version <- function(version) {
 get_codebook_v1 <- function(version) {
   url <- paste0("https://github.com/UCLATALL/CourseKataData/wiki/Codebook-v", version)
   rvest::read_html(url) %>%
-    rvest::html_elements('table') %>%
+    rvest::html_elements("table") %>%
     rvest::html_table()
 }
 
 get_codebook_v2 <- function(version) {
   url <- paste0("https://github.com/UCLATALL/CourseKataData/wiki/Codebook-v", version)
   tbls <- rvest::read_html(url) %>%
-    rvest::html_elements('table') %>%
+    rvest::html_elements("table") %>%
     rvest::html_table()
 
   # the odd tables are just info about where to find the surveys
