@@ -3,6 +3,8 @@
 
 # CourseKataData <img src='man/figures/logo.png' align="right" height="138" />
 
+**NOTE:** This package and wiki are being phased out. Please see research.coursekata.org for more info, and the [mo](https://github.com/coursekata/mo) for a more efficient data cleaner.
+
 <!-- badges: start -->
 
 [![R build
